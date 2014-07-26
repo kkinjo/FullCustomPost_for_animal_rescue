@@ -234,7 +234,12 @@ $wpd_instance->wpd_header(); ?>
                 else : ?>
             <h3>Not Found</h3>
             <p>Sorry, but you are looking for something that isn't here.</p>
-                <?php endif; /* ループ終了 */ ?>
+                <?php 
+					endif; /* ループ終了 */ 
+					
+					$wpd_instance->wpd_footer();
+				?>
+			
     </article>
     
     
@@ -243,6 +248,8 @@ $wpd_instance->wpd_header(); ?>
 </div>
 <!-- main -->
 <!-- /single.php -->
-
-<?php $wpd_instance->wpd_sidebar(); ?>
-<?php get_footer(); ?>
+<?php 
+	$wpd_instance->wpd_sidebar();
+	
+	get_footer(); 
+?>

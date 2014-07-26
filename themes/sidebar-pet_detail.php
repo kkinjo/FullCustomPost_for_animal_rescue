@@ -14,7 +14,7 @@ global $wpd_instance;
 	<aside class="module" id="local-navi_2">
 		<hgroup>
 
-		<h2>保護ワン・ニャン情報</h2>
+		<h2>保護ワンコ情報</h2>
 		<h3>PET INFORMATION</h3>
 
 		
@@ -40,7 +40,7 @@ global $wpd_instance;
 
 	<p class="eyecatch">
 
-			<img src="<?php echo WP_PLUGIN_URL.'/'.$wpd_instance->wpd_plugin_dirname.'/themes' ?>/img/pet_detail_log.jpg" width="214" style="height:158px" alt="">
+			<img src="<?php echo WP_PLUGIN_URL.'/'.$wpd_instance->wpd_plugin_dirname.'themes' ?>/img/pet_detail_log.jpg" width="214" style="height:158px" alt="">
 
 
 	</p>
@@ -53,7 +53,7 @@ global $wpd_instance;
 							<ul class="child">
 
 							
-	    						<li><a class="wpd_a" href="http://onesdog.net/pet_detail">保護ワン・ニャン一覧</a></li>
+	    						<li><a class="wpd_a" href="http://onesdog.net/pet_detail">保護ワンコ一覧</a></li>
 
 							
 	    						<li><a class="wpd_a" href="http://onesdog.net/family/event/">譲渡会のお知らせ</a></li>
@@ -77,13 +77,7 @@ global $wpd_instance;
 
 <div class="grid_3 pull_9" id="sidebar" style="margin-top: 30px;">
 	<div id="fb-root"></div>
-	<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&appId=555772281120154&version=v2.0";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
+
 	<aside class="module" id="local-navi_2">
 		<nav class="sidebar-navi">
 				<div class="fb-like-box" data-href="https://www.facebook.com/onespartner.satooya" data-width="200" data-height="800" data-colorscheme="light" data-show-faces="false" data-header="false" data-stream="true" data-show-border="false"></div>

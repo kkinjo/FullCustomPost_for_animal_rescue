@@ -11,6 +11,15 @@
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
 	<?php wp_head(); ?>
+		<script>
+			(function(d, s, id) {  
+				var js, fjs = d.getElementsByTagName(s)[0];			
+				if (d.getElementById(id)) return;
+				js = d.createElement(s); js.id = id;
+				js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&appId=555772281120154&version=v2.0";
+				fjs.parentNode.insertBefore(js, fjs);
+			}(document, 'script', 'facebook-jssdk'));
+		</script>
 </head>
 <body id="top" <?php body_class(); ?>>
 	<header id="header" class="clearfix">
@@ -60,7 +69,7 @@
 
 				<!-- headline -->
 				<hgroup id="page-title" class="clearfix">
-					<h2>保護ワン・ニャン 情報</h2><h3>Pet Information</h3>
+					<h2>保護ワンコ 情報</h2><h3>Pet Information</h3>
 				</hgroup>
 
 				<!-- / headline -->

@@ -29,7 +29,6 @@ if ($view_mode == "pet_detail_report"){
 
 $wpd_instance->wpd_header();
 
-
 /* ここらは プラグイン『wans_pet_detail』の 記事一覧に関する処理
  * ***********************************************************************************************************
  * ***********************************************************************************************************
@@ -57,6 +56,10 @@ $wpd_fetched_archives = $wpd_instance->wpd_get_archives(
 		, $wpd_instance->wpd_query_condtions['where']
 		, $wpd_instance->wpd_query_condtions['order']
 		, $view_mode
+		);
+$wpd_fetched_archives_count = $wpd_instance->wpd_get_archives_count( 
+		  $wpd_instance->wpd_query_condtions['where']
+		, $wpd_instance->wpd_query_condtions['order']
 		);
 
 /*
@@ -197,7 +200,7 @@ $wpd_fetched_archives = $wpd_instance->wpd_get_archives(
 					<td class="detail_list_table_td"><?php echo $rescuer; ?></td>
 					<td class="detail_list_table_td"><?php echo $foster; ?></td>
 					<?php endif; ?>
-					<td class="detail_list_table_td"><?php echo $facebookurl; ?></td>
+					<td class="detail_list_table_td"><?php if ( !empty( $facebookurl ) ) echo "<a target=_blank src='".$facebookurl."' >facebook</a>"; ?></td>
 
 
 				</tr>
@@ -269,12 +272,25 @@ $wpd_fetched_archives = $wpd_instance->wpd_get_archives(
 	/*
 	 * 【3】
 	 * ページネーション
+	 * 
+	 * 本来であれば $wp_query->max_num_pages を wpd_pagination に引き渡すだけでいいのですが、
+	 * MYSQL 5.6.11 と Wordpress 3.5.2 では  $wp_query->max_num_pages が正常に動作しなかった為
+	 * 独自で情報を引っ張り、算出しています。
+	 * 
+	 * 参考:
+	 * http://wpdocs.sourceforge.jp/%E9%96%A2%E6%95%B0%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/WP_Query
+	 * $max_num_pages 
+	 *   ページの合計数。$found_posts を $posts_per_page で割った結果。
+	 * 
 	 */
-	$wpd_instance->wpd_pagination($wp_query->max_num_pages);
+	$wpd_instance->wpd_pagination( ceil ( $wpd_fetched_archives_count / $wpd_instance->wpd_archive_page_post_count ) );
+	$wpd_instance->wpd_footer();
 ?>
 	</div>
 	<div class="detail_thumbnail_box-bottom"></div>
+	
 <?php 
+	
 	/* 記事一覧に関する プラグイン『wans_pet_detail』の処理はここまで。
 	 * ***********************************************************************************************************
 	 * ***********************************************************************************************************
@@ -283,15 +299,18 @@ $wpd_fetched_archives = $wpd_instance->wpd_get_archives(
 	if (function_exists('wp_pagenavi')): /* ページャープラグイン wp_pagenavi用 */
 	wp_pagenavi();
 	else:            
-		if ( $wp_query -> max_num_pages > 1 ) : /* 複数ページ用のナビゲーション */ ?>
+		?>
 			<nav class="navigation">
 				<div class="alignleft"><?php previous_posts_link('&laquo; PREV'); ?></div>
 				<div class="alignright"><?php next_posts_link('NEXT &raquo;'); ?></div>
 			</nav>
-		<?php endif;
+		<?php 
 endif; ?>
 
 </div>
 <!-- main -->
 <!-- / archive-information.php -->
-<?php get_footer(); ?>
+<?php 
+
+get_footer(); 
+?>

@@ -263,8 +263,8 @@ class Wpd_class
 		register_post_type( 'pet_detail'
 				,array(
 					'labels' => array(
-						'name' => __( '保護ワン・ニャンデータ' )
-						,'singular_name' => __( '保護ワン・ニャンデータ' )
+						'name' => __( '保護ワンコデータ' )
+						,'singular_name' => __( '保護ワンコデータ' )
 						)
 					,'public' => true
 					,'supports' => array( 'title', 'exmeta_sectionid', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields' ,'comments' )
@@ -280,8 +280,8 @@ class Wpd_class
 		//		,'pet_detail'
 		//		,array( 'hierarchical' => true
 		//			,'update_count_callback' => '_update_post_term_count'
-		//			,'label' => '保護ワン・ニャンデータのカテゴリー'
-		//			,'singular_label' => '保護ワン・ニャンデータのカテゴリー'
+		//			,'label' => '保護ワンコデータのカテゴリー'
+		//			,'singular_label' => '保護ワンコデータのカテゴリー'
 		//			,'public' => true
 		//			,'show_ui' => true
 		//			)
@@ -961,6 +961,12 @@ class Wpd_class
 			  
   }
 
+	function wpd_footer() {
+
+	 echo "<div style='text-align: right;margin-top: 20px;'>plugged by <a target='_blank' href='https://github.com/kkinjo/FullCustomPost_for_animal_rescue' >FullCustomPost_for_animal_rescue</a>. created by <a target='_blank' href='http://about.me/katsumi.kinjo' >katsumi kinjo</a></div>";
+			  
+  }
+
 	function wpd_sidebar() {
 
 		include(WP_PLUGIN_DIR.'/'.$this->wpd_plugin_dirname.'/themes/'.'sidebar-' . $this->wpd_category_name . '.php');
@@ -1053,6 +1059,29 @@ class Wpd_class
 		return isset($wpd_get_cate) ? $wpd_get_cate : null;
 	}
 
+	function wpd_get_archives_count($wpd_cate_where=null,$wpd_cate_order=null) {
+		global $wpdb;
+		$wpd_cate_select_from = "SELECT count(*) FROM ".$this->table_name;
+		if( is_null ( $wpd_cate_where ) ) {
+			$wpd_cate_where = "";
+		}
+		else{
+			
+			$wpd_cate_where = "where ".$wpd_cate_where;
+		}		
+
+		if( is_null ( $wpd_cate_order ) ) {
+			$wpd_cate_order = "";
+		}
+		else{
+			$wpd_cate_order = "order by ".$wpd_cate_order;
+		}
+
+		$wpd_cate_sql = $wpd_cate_select_from." ".$wpd_cate_where." ".$wpd_cate_order;
+		$wpd_get_cate = $wpdb->get_results($wpd_cate_sql,ARRAY_N );
+		return $wpd_get_cate[0][0];
+	}
+
 	function wpd_get_rows_for_report($report_sql) {
 		global $wpdb;
 		
@@ -1088,7 +1117,8 @@ class Wpd_class
 
 
 
-	function wpd_pagination( $pages = '', $range = 4 ) {
+	function wpd_pagination( $pages = '' ) {
+		$range = 4;
 		$showitems = ( $range * 2 )+1;
 		global $paged;
 		if( empty ( $paged ) ) $paged = 1;
@@ -1417,7 +1447,7 @@ define('SAVEQUERIES', 1);
 //add_action('shutdown', 'on_shutdown');
 
 function on_shutdown() {
-	// if (is_post_type_archive('pet_detail')) {
+	if (is_post_type_archive('pet_detail')) {
 	global $wpdb;
 	echo '<table class="wp-list-table widefat fixed posts">';
 	echo '<thead><th>SQL</th><th>Time</th><th>Caller</th></thead>';
@@ -1429,7 +1459,7 @@ function on_shutdown() {
 	}
 	echo '</tbody>';
 	echo '</table>';
-	//	}
+		}
 }
 
 function kkdump($t_v){
