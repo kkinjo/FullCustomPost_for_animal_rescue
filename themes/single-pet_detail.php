@@ -1,0 +1,248 @@
+<?php
+/****************************************
+
+		single.php
+
+カスタム投稿「detail」を表示する single.php
+ * 
+ * created by kkinjo 2013/10/05
+
+*****************************************/
+include_once 'simple_html_dom.php';
+
+//var_dump($wpd_instance);
+$wpd_data_set = $wpd_instance->wpd_fetch_data($post->ID);
+
+foreach($wpd_data_set as $colname => $value){
+$$colname = isset($value) ? $value : null;
+}
+
+    /* 配列カウント */
+    if(!empty($status_history)){
+    $status_history = preg_replace('/,+\z/',"",$status_history);
+    $status_history_array = explode(',', $status_history);
+    $status_history_count = count($status_history_array)/2 ;
+    $status_history ="";
+    for ($i = 0; $i <= $status_history_count; ) {
+        $status_history .= $status_history_array[$i++].' : '.$status_history_array[$i++].' ～ '. $status_history_array[$i+1].'<BR>';
+        }
+    
+    }
+
+    if(!empty($related_url)){
+    $related_url = preg_replace('/,+\z/',"",$related_url);
+    $related_url_array = explode(',', $related_url);
+    $related_url_count = count($related_url_array) /2;
+    
+    $related_url = "";
+    for ($i = 0; $i <= $related_url_count; $i++) {
+        $related_url.= '<div><a href="'.$related_url_array[$i++].'" target="_blank" />'.$related_url_array[$i].'</a></div>';
+        }
+        
+    }
+        
+    //年齢計算
+    $wpd_age = str_replace("-", "",$birthyear);
+    $wpd_age = (int) ((date('Ymd')-$wpd_age)/10000);
+    
+$wpd_instance->wpd_header(); ?>
+
+<!-- single.php -->
+<div class="grid_9 push_3" id="main">
+    <div class="box-top"></div>
+    <article class="box-middle single-post post clearfix">
+        <?php if (have_posts()) : /* ループ開始 */
+               while (have_posts()) : the_post(); ?>
+
+            <h3><?php echo $pet_name; /* 記事のタイトル */ ?></h3>
+            <div class="metabox clearfix">
+                <time class="post-date" datetime="<?php echo get_the_date("Y-m-j") ?>"><?php echo get_the_date(); /* 日付 */  ?></time>
+                <div>
+                    <span>カテゴリー：</span>
+                    <?php the_category(''); /* カテゴリー */ ?>
+		</div>
+            </div>           
+    <div >
+        <?php if(!empty($photo)): /* アイキャッチ画像 */ ?>
+        <img src="<?php echo $wpd_instance->wpd_plugin_url."thumbnail/".$post->ID.".jpg"; ?> " />
+        <?php else: ?>
+        <img src="<?php echo get_template_directory_uri(); ?>/images/no-image.jpg" alt="" class="grid_9"/>
+        <?php endif; ?>
+    </div>    
+            
+            <?php the_content(); /* コンテンツ */ ?>
+<?php 
+     
+?>
+            
+<div>
+    <div class="grid_3">
+        <div class="level1_name">基本情報</div>
+        <div class="level1_data">
+            <div class="item"><div class="item_name">年齢</div><div class="item_data_s"><?php echo $birthyear_almost_flag." ".$wpd_age; ?> 歳</div></div>
+            
+            <div class="item"><div class="item_name">性別</div><div class="item_data_s"><?php echo $sex; ?></div></div>
+            <div class="item"><div class="item_name">色</div><div class="item_data_s"><?php echo $color; ?></div></div>
+            <div class="item"><div class="item_name">犬種/猫種</div><div class="item_data_s"><?php echo $breed; ?></div></div>
+            
+        </div>
+        
+    </div>
+    
+    <div class="grid_4 ">
+        <div class="level1_name">健康状態</div>
+        <div class="level1_data">
+            <div class="item"><div class="item_name">避妊/去勢</div><div class="item_data_s"><?php echo $neutering; ?></div></div>
+            <div class="item"><div class="item_name">ワクチン</div><div class="item_data_s"><?php echo $vaccine; ?></div></div>
+            <div class="item"><div class="item_name">健康状態</div><div class="item_data_s"><?php echo $health_condition; ?></div></div>
+            <div class="item"><div class="item_name">大きさ</div><div class="item_data_s"><?php echo $Breeds_size; ?></div></div>
+        </div>
+    </div>
+
+    <div class="grid_7">
+        <div class="level1_name">ワンズステータス</div>
+        <div class="level1_data">
+            <div class="item"><div class="item_name">ワンズ登録日</div><div class="item_data_s"><?php echo $wans_reg_date; ?></div></div>
+            <div class="item"><div class="item_name">現在のステータス</div><div class="item_data_s"><?php echo $now_status; ?></div></div>
+				<?php
+					if($status_history !== " :  ～ <BR>"){
+				?>
+			<div class="item"><div class="item_name">ステータス変更履歴</div><div class="item_data_s"><?php echo $status_history; ?></div></div>
+				<?php
+					}
+				?>
+			
+			
+			
+			        
+        </div>
+    </div>
+    
+    <div class="grid_7">
+        <div class="level1_name">詳細情報</div>
+        <div class="level1_data">
+            <div class="item"><div class="item_name_l">経緯概要</div><div class="item_data_l"><?php echo $why_is_here; ?></div></div>
+            <div class="item"><div class="item_name_l">性格/ストーリー</div><div class="item_data_l"><?php echo $story; ?></div></div>
+        </div>
+    </div>
+
+    
+    <div class="grid_7">
+        <div class="level1_name">メディア</div>
+     	<div class="level1_data">
+            <div class="item"><div class="item_name">FACEBOOK</div><div class="item_data_s"><?php if(!empty($facebookurl)){echo '<a href='.$facebookurl.'" target="_blank">里親募集中！ワン\'sパートナーの会</a>';} ?></div></div>
+
+            <?php 
+                if (!empty($photo_url)) {
+			?>
+            <div class="item"><div class="item_name">写真集ページ</div></div>
+            <div id="containerimg">
+			<?php
+                    $photo_url_dom = file_get_html($photo_url);
+                    $img_src_array = array();
+                    foreach($photo_url_dom->find('img') as $element) 
+                    {
+                        if(preg_match('/googleusercontent/',$element->src)){
+                            //list($width,$height) = getimagesize($element->src);
+                            array_push($img_src_array,$element->src);
+                            //echo '<img class="box" src='.$element->src.' style="height: 150px;">' ;
+                        }
+                    }
+                    
+                    for($a = 0; $a < 8; $a++){
+                        echo '<img class="box" src='.$img_src_array[$a].' style="height: 150px;">' ;
+                    }    
+			?>
+			</div>
+			<?php
+               }
+            ?>
+            
+			<div class="item"><div class="item_data_s"><?php if(!empty($photo_url)){echo '<a href='.$photo_url.'  target="_blank">他の写真をもっと見る。</a>' ;} ?></div></div>
+            
+			<?php 
+			if(!empty($related_url)){
+			?>
+            <div class="item"><div class="item_name_l">その他のリンク</div>
+                <div class="item_data_l"><?php echo $related_url; ?></div>
+			</div>
+			<?php				
+			}
+			?>
+            
+
+            
+        </div>
+    </div>
+        
+    <div class="grid_7">
+    	<div class="level1_data">
+            <div class="level1_name">検討されている方へ</div>
+            <div class="level1_data">
+                <div class="item"><div class="item_name_l">基本事項として『<a href="http://onesdog.net/family/" target="_blank">当会からイヌを家族として迎えるには</a>』をご確認ください。</div></div>
+                <?php 
+					if($supplement){
+				?>
+				<div class="item"><div class="item_name_l">譲渡についての補足事項</div><div class="item_data_l"><?php echo $supplement; ?></div></div>
+				<?php
+					}
+					if($additional_condition){
+				?>
+				<div class="item"><div class="item_name_l">特別条件</div><div class="item_data_l"><?php echo $additional_condition; ?></div></div>
+				<?php
+					}
+					if($additional_cost){
+				?>
+				<div class="item"><div class="item_name_l">特別費用</div><div class="item_data_l"><?php echo $additional_cost; ?></div></div>
+				<?php
+					}
+				?>
+				
+            </div>
+        </div>
+    </div>
+    
+    <?php if ( is_user_logged_in() ) : ?>
+    <div class="grid_7">
+        <div class="level1_name">管理情報(非公開)</div>
+        <div class="level1_data">
+            <div class="item"><div class="item_name_l">管理メモ</div><div class="item_data_l"><?php echo $note; ?></div></div><hr>
+
+            <div class="item"><div class="item_name">預かりさん</div><div class="item_data_s"><?php echo $depository; ?></div></div>
+            
+            <div class="item"><div class="item_name">保護依頼主</div><div class="item_data_s"><?php echo $rescuer; ?></div></div>
+            
+            <div class="item"><div class="item_name">譲渡先</div><div class="item_data_s"><?php echo $foster; ?></div></div>
+            <hr>
+            <div class="item"><div class="item_name">中西さん撮影(FB_URL)</div><div class="item_data_s"><?php echo $phote_fb_url; ?></div></div>
+            <div class="item"><div class="item_name">チラシ</div><div class="item_data_s"><?php echo $detail_paper; ?></div></div>
+            <BR>
+            <div><?php edit_post_link('この記事を編集', '<p>', '</p>'); ?></div>
+        </div>
+    </div>
+    <?php endif; ?>
+
+
+</div>
+
+            
+            <nav class="post-navi">
+                <span id="prev"><?php previous_post_link('%link','« %title'); /* 前の記事へ */ ?></span>
+                <span id="next"><?php next_post_link('%link','%title »'); /* 次の記事へ */ ?></span>
+            </nav>
+                <?php endwhile;
+                else : ?>
+            <h3>Not Found</h3>
+            <p>Sorry, but you are looking for something that isn't here.</p>
+                <?php endif; /* ループ終了 */ ?>
+    </article>
+    
+    
+    <div class="box-bottom"></div>
+        
+</div>
+<!-- main -->
+<!-- /single.php -->
+
+<?php $wpd_instance->wpd_sidebar(); ?>
+<?php get_footer(); ?>
