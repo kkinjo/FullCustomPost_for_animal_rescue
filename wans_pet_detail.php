@@ -134,7 +134,16 @@ class Wpd_class
 						,'checked'=>'','default'=> 'all'  ,'value_set' => array('all'=>"すべて",'is_not_null'=>"済み",'is_null'=>"未")	 );
 			$this->sia["now_status" ]
 					=array('condition_type'=>"where"   ,'input_type'=>"checkbox" ,'discription'=>"ステータス"
-						,'checked'=>'','default'=> array(),'value_set' => ""												   );
+						,'checked'=>'','default'=> array(),
+						'value_set' => array(
+							"里親、募集しています"
+							,"トライアル中です"
+							,"譲渡されました"
+							,"里親募集一時停止"
+							,"迷子、保護しています"
+							,"迷子になりました。探しています。"
+							)
+					);
 			
 			$this->wpd_query_condtions = $this->wpd_query_condtion_setting($this->sia);
 			
@@ -613,7 +622,36 @@ class Wpd_class
 		   </div>
 		   <div class="wpd_coltitle_row">
 			   <div class="wpd_col_data"><input name="wans_reg_date" class="wpd_input_class wpd_tdp" value="<?php echo $wans_reg_date ?>" /></div>
-			   <div class="wpd_col_data"><input name="now_status"	class="wpd_input_class input_mandatory"		 value="<?php echo $now_status ?>" ajax_autocomplete /><a class="kick_ajax_autocomplete" value="now_status" search="off" >参考値</a></div>
+			   <div class="wpd_col_data">
+				   <select  class="wpd_input_class" name="now_status">
+					   <?php 
+							$now_status_valueset = 
+									array(
+										"里親募集系" => array(
+											"里親、募集しています"=>"里親、募集しています"
+											,"トライアル中です"=>"トライアル中です"
+											,"譲渡されました"=>"譲渡されました"
+											,"里親募集一時停止"=>"里親募集一時停止(非公開)"
+											),
+										"迷子系" => array(
+											"迷子、保護しています"=>"迷子、保護しています"
+											,"迷子になりました。探しています。"=>"迷子になりました。探しています。"
+											)
+										);
+							
+								foreach ( $now_status_valueset as $key => $value ) {									
+									echo "<optgroup label='".$key."'>";
+									foreach ( $value as $select_key => $select_value ) {
+										echo '<option value="'.$select_key.'"';
+										if($key == $now_status)  echo "selected";
+										echo '>'.$select_value.'</option>';
+									}
+									echo "</optgroup>";
+								} 
+					
+						?>
+				   </select>
+			   </div>
 			   <div class="wpd_col_data"><input name="recent_status_change"  class="wpd_input_class wpd_tdp"  value="<?php echo $recent_status_change ?>" /></div>
 		   </div>
 	   </div>
@@ -963,7 +1001,7 @@ class Wpd_class
 
 	function wpd_footer() {
 
-	 echo "<div style='text-align: right;margin-top: 20px;'>plugged by <a target='_blank' href='https://github.com/kkinjo/FullCustomPost_for_animal_rescue' >FullCustomPost_for_animal_rescue</a>. created by <a target='_blank' href='http://about.me/katsumi.kinjo' >katsumi kinjo</a></div>";
+	 echo "<div style='text-align: right;margin-top: 20px; clear:both;'>plugged by <a target='_blank' href='https://github.com/kkinjo/FullCustomPost_for_animal_rescue' >FullCustomPost_for_animal_rescue</a>. created by <a target='_blank' href='http://about.me/katsumi.kinjo' >katsumi kinjo</a></div>";
 			  
   }
 
@@ -1201,6 +1239,7 @@ class Wpd_class
 		 * 3.SQL生成用の変数を作成
 		 */
 		foreach($sia as $sia_name => &$t_arry){
+			
 			/* value_set を設定
 			 * radio の場合はそのままで OK なので、checkbox のみ、DB より取得
 			 */
@@ -1211,7 +1250,22 @@ class Wpd_class
 
 				/* SQL文を実行して、結果を配列で value_set に格納 */
 				$wpd_get_query_conditon_items = $wpdb->get_results($wpd_get_query_conditon_items_sql,ARRAY_A );
-				$t_arry["value_set"] = explode(",",$wpd_get_query_conditon_items[0]["lists"]);
+				$registed_valuesets = explode(",",$wpd_get_query_conditon_items[0]["lists"]);
+				
+				//もし checkbox でも value_set がある場合は、実際に登録されている値を追加して、
+				//重複を排除する。				
+				if ( is_array ( $t_arry["value_set"] ) ){
+					foreach ( $wpd_requested_order_by_array as $key => $value ) {
+						$t_arry["value_set"][] = $value;
+					}
+					$t_arry["value_set"] = array_unique($t_arry["value_set"]);
+				}
+				else{
+					$t_arry["value_set"] = $registed_valuesets;
+				}
+				
+				
+				
 				
 			}
 
@@ -1244,7 +1298,8 @@ class Wpd_class
 				
 				/* 取得GETパラメータの配列を foreach で value_set と比較して、元配列の checked 配列に一つづつ追加 */
 				foreach ( $wpd_requested_where_array as $rwa_key => $rwa_arry ) {
-
+					
+					
 					if(  in_array ( $rwa_arry, $value_set_plus_nulls )){
 
 						if( $t_arry["input_type"] ==="checkbox" ){
@@ -1258,6 +1313,7 @@ class Wpd_class
 						$t_arry['checked']=$t_arry['default'];
 					}
 				}
+				//var_dump($t_arry);
 				/* 最後に SQLクエリに反映。 */
 				/* 複数項目選択(in条件)の場合は配列なので is_array でチェック */
 				if(!empty($t_arry['checked'][0]) && is_array($t_arry['checked'])){
