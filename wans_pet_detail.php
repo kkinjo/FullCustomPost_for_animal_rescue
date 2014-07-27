@@ -25,6 +25,7 @@ class Wpd_class
 	var $wpd_query_condtions;
 	var $wpd_init_query;
 	var $sia;
+	var $is_404;
 
 	public function __construct() 
 	{
@@ -975,19 +976,14 @@ class Wpd_class
 	function Af_switch_themes_file($template) {
 
 		global $wp_query,$wpdb,$post,$wpd_instance;
-		if ( $this->wpd_category_name == $wp_query->post->post_type && is_archive() )
-			{
-				include(WP_PLUGIN_DIR.'/'.$this->wpd_plugin_dirname.'/themes/'.'archive-' . $this->wpd_category_name . '.php');
-				exit;
-			}
-		elseif ( $this->wpd_category_name == $wp_query->post->post_type && is_single() )
+		if ( $this->wpd_category_name == $wp_query->query_vars['post_type']  && is_single() )
 			{
 				include(WP_PLUGIN_DIR.'/'.$this->wpd_plugin_dirname.'/themes/'.'single-' . $this->wpd_category_name . '.php');
 				exit;
 			}
-		elseif ( $this->wpd_category_name == $wp_query->post->post_type && is_404()  )
+		elseif ( $this->wpd_category_name == $wp_query->query_vars['post_type'] )
 			{
-				include(WP_PLUGIN_DIR.'/'.$this->wpd_plugin_dirname.'/themes/'.'pet_detail_report.php');
+				include(WP_PLUGIN_DIR.'/'.$this->wpd_plugin_dirname.'/themes/'.'archive-' . $this->wpd_category_name . '.php');
 				exit;
 			}
 			  
@@ -1012,9 +1008,9 @@ class Wpd_class
   }
 
 	function Aa_add_css_to_theme() {
-	  global $wpdb,$post;
+	  global $wp_query,$wpdb,$post;
 
-	  if ( $this->wpd_category_name == get_post_type( $post ))
+	  if ( $this->wpd_category_name == $wp_query->query_vars['post_type'] )
 			  {
 				  echo '<!-- プラグイン wans_pet_detail 用 CSS -->';
 				  echo '<link type="text/css" rel="stylesheet" href="'.WP_PLUGIN_URL.'/'.$this->wpd_plugin_dirname.'css/wans_pet_detail.css">';
@@ -1030,9 +1026,9 @@ class Wpd_class
 			  }
 
 	function Aa_add_jscript_to_theme() {
-		global $post;
+		global $wp_query,$post;
 
-		if ( $this->wpd_category_name == get_post_type( $post ) ){
+		if ( $this->wpd_category_name == $wp_query->query_vars['post_type']  ){
 			wp_enqueue_script('buttons', WP_PLUGIN_URL.'/'.$this->wpd_plugin_dirname.'js/buttons.js',array('jquery'));
 			wp_enqueue_script('wans_pet_detail', WP_PLUGIN_URL.'/'.$this->wpd_plugin_dirname.'js/wans_pet_detail.js',array('jquery'));
 			//wp_enqueue_script('jquery-ui-1.9.0', WP_PLUGIN_URL.'/'.$this->wpd_plugin_dirname.'js/jquery-ui-1.9.0.custom.js',array('jquery'));

@@ -267,6 +267,10 @@ $wpd_fetched_archives_count = $wpd_instance->wpd_get_archives_count(
 				</tbody></table></div>
 		<?php 
 		}
+		
+		if ( $wpd_fetched_archives_count == "0" ){
+			echo "一致する情報がありません。条件を変えて検索して下さい。";
+		}
 	
 	
 	/*
