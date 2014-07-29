@@ -1327,7 +1327,10 @@ class Wpd_class
 						$t_arry['checked'] !== "all"
 						){
 					/*  */
-					if( $t_arry['checked'] === "is_null" || $t_arry['checked'] === "is_not_null"  ){
+					if( $t_arry['checked'] === "is_null" ){
+						$checked_for_query_where_array[]= $this->table_name.".".$sia_name." = ''";
+					}
+					elseif( $t_arry['checked'] === "is_not_null" ){
 						$t_arry_edit = str_replace("_"," ",$t_arry['checked']);
 						$checked_for_query_where_array[]= $this->table_name.".".$sia_name." ".$t_arry_edit;
 					}
