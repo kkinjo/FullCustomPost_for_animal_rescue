@@ -216,6 +216,7 @@ class Wpd_class
 			color				   VARCHAR(30),
 			breed				   VARCHAR(30),
 			Breeds_size            VARCHAR(30),
+			weight                  VARCHAR(30),
 			wans_reg_date		   DATE,
 			now_status			  VARCHAR(30),
 			recent_status_change	DATE,
@@ -587,7 +588,8 @@ class Wpd_class
 	   </div>
 	   <div class="wpd_coltitle_box">
 		   <div class="wpd_coltitle_row">
-			   <div class="wpd_coltitle">大きさ<?php  ?></div>
+			   <div class="wpd_coltitle">大きさ</div>
+			   <div class="wpd_coltitle">体重(おおよそ)</div>
 		   </div>
 		   <div class="wpd_coltitle_row">
 			   <div class="wpd_col_data">
@@ -612,6 +614,7 @@ class Wpd_class
 						?>
 				   </select>
 			   </div>
+			   <div class="wpd_col_data"><input class="wpd_input_class" name="weight"				 value="<?php echo $weight ?>" ajax_autocomplete /><a class="kick_ajax_autocomplete" value="weight" search="off" >参考値</a></div>
 		   </div>
 	   </div>
 
@@ -908,7 +911,7 @@ class Wpd_class
 		//配列の初期値s
 		
 		//prepare が使えないので、SQLインジェクション対策を自前で行うための配列
-		$wpd_columns_set = array('sex','color','breed','now_status','health_condition','why_is_here','rescuer','depository');
+		$wpd_columns_set = array('sex','color','breed','weight','now_status','health_condition','why_is_here','rescuer','depository');
 		
 		$json_result = array();
 		//ユーザーが管理者で、URLパラメータtarget_column の値が 事前定義配列と一致している場合
@@ -976,6 +979,7 @@ class Wpd_class
 	function Af_switch_themes_file($template) {
 
 		global $wp_query,$wpdb,$post,$wpd_instance;
+		//シングル以外の場合は 404 であっても archive が表示されます。
 		if ( $this->wpd_category_name == $wp_query->query_vars['post_type']  && is_single() )
 			{
 				include(WP_PLUGIN_DIR.'/'.$this->wpd_plugin_dirname.'/themes/'.'single-' . $this->wpd_category_name . '.php');

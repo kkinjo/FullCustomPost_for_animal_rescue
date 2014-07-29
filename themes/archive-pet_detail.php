@@ -100,6 +100,7 @@ $wpd_fetched_archives_count = $wpd_instance->wpd_get_archives_count(
 						<th class="detail_list_table_td_t_th">性別</th>
 						<th class="detail_list_table_td_t_th">種類</th>
 						<th class="detail_list_table_td_t_th">大きさ</th>
+						<th class="detail_list_table_td_t_th">体重</th>
 						<th class="detail_list_table_td_t_th">去勢</th>
 						<th class="detail_list_table_td_t_th">ワクチン</th>
 						<th class="detail_list_table_td_t_th">健康状態</th>
@@ -139,6 +140,7 @@ $wpd_fetched_archives_count = $wpd_instance->wpd_get_archives_count(
 						<th class="detail_list_table_td_t_th">性別</th>
 						<th class="detail_list_table_td_t_th">種類</th>
 						<th class="detail_list_table_td_t_th">大きさ</th>
+						<th class="detail_list_table_td_t_th">体重</th>
 						<th class="detail_list_table_td_t_th">去勢</th>
 						<th class="detail_list_table_td_t_th">ワクチン</th>
 						<th class="detail_list_table_td_t_th">健康状態</th>
@@ -192,6 +194,7 @@ $wpd_fetched_archives_count = $wpd_instance->wpd_get_archives_count(
 					<td class="detail_list_table_td"><?php echo $sex  ; ?></td>
 					<td class="detail_list_table_td"><?php echo $breed; ?></td>
 					<td class="detail_list_table_td"><?php echo $Breeds_size; ?></td>
+					<td class="detail_list_table_td"><?php echo $weight; ?></td>
 					<td class="detail_list_table_td"><?php echo $neutering; ?></td>
 					<td class="detail_list_table_td"><?php echo $vaccine; ?></td>
 					<td class="detail_list_table_td"><?php echo $health_condition; ?></td>
@@ -244,6 +247,8 @@ $wpd_fetched_archives_count = $wpd_instance->wpd_get_archives_count(
                         <?php if(!empty($neutering)){echo "<span>避妊/去勢:".$neutering."</span>";} ?>
                         <?php if(!empty($vaccine)){echo "<span>ワクチン:".$vaccine."</span>";} ?>
                         <?php if(!empty($health_condition)){echo "<span>健康状態:".$health_condition."</span>";} ?>
+                        <?php if(!empty($Breeds_size)){echo "<span>大きさ:".$Breeds_size."</span>";} ?>
+                        <?php if(!empty($weight)){echo "<span>体重:".$weight."</span>";} ?>
 			</div>
 		</a>
 	</article>            

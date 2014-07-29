@@ -96,6 +96,7 @@ $wpd_instance->wpd_header(); ?>
             <div class="item"><div class="item_name">ワクチン</div><div class="item_data_s"><?php echo $vaccine; ?></div></div>
             <div class="item"><div class="item_name">健康状態</div><div class="item_data_s"><?php echo $health_condition; ?></div></div>
             <div class="item"><div class="item_name">大きさ</div><div class="item_data_s"><?php echo $Breeds_size; ?></div></div>
+            <div class="item"><div class="item_name">体重(おおよそ)</div><div class="item_data_s"><?php echo $weight; ?></div></div>
         </div>
     </div>
 
