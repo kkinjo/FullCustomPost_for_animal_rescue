@@ -5,3 +5,7 @@ wordpress plugin "FullCustomPost_for_animal_rescue"
 
 
 FullCustomPost_for_animal_rescue
+<<<<<<< HEAD
+=======
+FullCustomPost_for_animal_rescue
+>>>>>>> origin/develop
