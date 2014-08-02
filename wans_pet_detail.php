@@ -403,7 +403,7 @@ class Wpd_class
 		
 		$admin_col_html = array();
 		//列名の変数に 行レコード を 列名_set変数に、行レコードとカタログ情報を追加
-		if(!empty($wpd_data_set[0])){
+                if(!empty($wpd_data_set[0])){
 			foreach($wpd_data_set[0] as $colname => $wds_value){
 				//これまでのコード
 				$$colname = isset($wds_value) ? $wds_value : null;
@@ -425,26 +425,7 @@ class Wpd_class
 				}
 			}
 			
-			/* 配列カウント */
-			if( !is_null ( $status_history ) ){
-				$status_history = preg_replace('/,+\z/',"",$status_history);
-				$status_history_array = explode(',', $status_history);
-				$status_history_count = count($status_history_array) ;
-				}
-				
-			if( !is_null ( $related_url ) ){
-				$related_url = preg_replace('/,+\z/',"",$related_url);
-				$related_url_array = explode(',', $related_url);
-				$related_url_count = count($related_url_array) ;
-				}
-				
-			/* 画像ファイル */
-			if( is_null ( $photo ) ){
-				$photo = WP_PLUGIN_URL.'/'.$this->wpd_plugin_dirname.'thumbnail/noimage_o.jpg';
-				$photo_coordinates = "0,55,410,260,410,205";
-			}
-		
-			
+                        
 			foreach ( $admin_col_html as $achkey => $achvalue ) {
 				//項目ブロック開始
 				$admin_col_html[$achkey]["html"]  = "<div class='wpd_admin_block_box'>";
@@ -530,7 +511,35 @@ class Wpd_class
 			$wpd_new_wansid_res = $wpdb->get_results( $wpdb->prepare( "SELECT MAX( meta_id ) +1 as value FROM ".$this->table_name,ARRAY_N ));
 			$meta_id = $wpd_new_wansid_res[0]->value;
 		}
-
+                
+  
+                /* 配列カウント */
+		if( !is_null ( $status_history ) ){
+			$status_history = preg_replace('/,+\z/',"",$status_history);
+			$status_history_array = explode(',', $status_history);
+			$status_history_count = count($status_history_array) ;
+			}
+			
+		if( !is_null ( $related_url ) ){
+			$related_url = preg_replace('/,+\z/',"",$related_url);
+			$related_url_array = explode(',', $related_url);
+			$related_url_count = count($related_url_array) ;
+			}
+			
+		/* 画像ファイル */
+		if( empty ( $photo ) ){
+			$photo = WP_PLUGIN_URL.'/'.$this->wpd_plugin_dirname.'thumbnail/noimage_o.jpg';
+			$photo_coordinates = "4,25,410,228,406,203";
+		}
+                
+                
+                
+                
+                
+                
+                
+                
+                
 	?>
 	<div>
 		<input type="hidden" name="meta_id" value="<?php echo $meta_id ?>">
