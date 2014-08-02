@@ -1,7 +1,7 @@
 FullCustomPost_for_animal_rescue
 ================================
 
-** wordpress plugin FullCustomPost_for_animal_rescue **
+ **wordpress plugin FullCustomPost_for_animal_rescue**
 
 
 ## 概要
