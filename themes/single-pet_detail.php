@@ -136,7 +136,7 @@ $wpd_instance->wpd_header(); ?>
             <?php 
                 if (!empty($photo_url)) {
 			?>
-            <div class="item"><div class="item_name">写真集ページ</div></div>
+            <div class="item"><div class="item_name">ギャラリー</div></div>
             <div id="containerimg">
 			<?php
                     $photo_url_dom = file_get_html($photo_url);
@@ -144,23 +144,32 @@ $wpd_instance->wpd_header(); ?>
                     foreach($photo_url_dom->find('img') as $element) 
                     {
                         if(preg_match('/googleusercontent/',$element->src)){
-                            //list($width,$height) = getimagesize($element->src);
-                            array_push($img_src_array,$element->src);
-                            //echo '<img class="box" src='.$element->src.' style="height: 150px;">' ;
+							$img_src_array[] = $element->src;
                         }
                     }
                     
-                    for($a = 0; $a < 8; $a++){
-                        echo '<img class="box" src='.$img_src_array[$a].' style="height: 150px;">' ;
-                    }    
+					//枚数カウント変数初期化。
+					$fcpfar_gdphoto_view_counter = 0;
+					foreach ( $img_src_array as $key => $value ) {
+						// 8枚で表示は終了
+						if( $fcpfar_gdphoto_view_counter == 8 ){
+							echo '<BR><a href='.$photo_url.'  target="_blank">他の写真をもっと見る。</a>';
+							break;
+						}
+						echo '<img class="box" src='.$value.' style="height: 150px;">' ;
+						//枚数カウントのためインクリメント
+						$fcpfar_gdphoto_view_counter++;
+					}
+                    //for($a = 0; $a < 8; $a++){
+                    //    echo '<img class="box" src='.$img_src_array[$a].' style="height: 150px;">' ;
+                    //}    
 			?>
 			</div>
 			<?php
                }
             ?>
             
-			<div class="item"><div class="item_data_s"><?php if(!empty($photo_url)){echo '<a href='.$photo_url.'  target="_blank">他の写真をもっと見る。</a>' ;} ?></div></div>
-            
+			
 			<?php 
 			if(!empty($related_url)){
 			?>
