@@ -19,15 +19,24 @@ $$colname = isset($value) ? $value : null;
 
     /* 配列カウント */
     if(!empty($status_history)){
-    $status_history = preg_replace('/,+\z/',"",$status_history);
-    $status_history_array = explode(',', $status_history);
-    $status_history_count = count($status_history_array)/2 ;
-    $status_history ="";
-    for ($i = 0; $i <= $status_history_count; ) {
-        $status_history .= $status_history_array[$i++].' : '.$status_history_array[$i++].' ～ '. $status_history_array[$i+1].'<BR>';
-        }
-    
-    }
+		$status_history_array =  json_decode($status_history,TRUE );
+		$status_history_html = "";
+		foreach ( $status_history_array as $sha_key => $sha_value ) {
+			
+			if( 
+					!empty($sha_value["date"]) 
+					&&
+					!preg_match('/非公開/',$sha_value["status"])
+			){
+				$status_history_html .= $sha_value["date"]." - ";
+				$status_history_html .= $sha_value["status"];
+				$status_history_html .= "<BR>";
+				
+			}
+			
+		}
+		
+	}
 
     if(!empty($related_url)){
     $related_url = preg_replace('/,+\z/',"",$related_url);
@@ -106,9 +115,9 @@ $wpd_instance->wpd_header(); ?>
             <div class="item"><div class="item_name">ワンズ登録日</div><div class="item_data_s"><?php echo $wans_reg_date; ?></div></div>
             <div class="item"><div class="item_name">現在のステータス</div><div class="item_data_s"><?php echo $now_status; ?></div></div>
 				<?php
-					if($status_history !== " :  ～ <BR>"){
+					if(!empty($status_history)){
 				?>
-			<div class="item"><div class="item_name">ステータス変更履歴</div><div class="item_data_s"><?php echo $status_history; ?></div></div>
+			<div class="item"><div class="item_name">ステータス変更履歴</div><div class="item_data_s"><?php echo $status_history_html; ?></div></div>
 				<?php
 					}
 				?>
