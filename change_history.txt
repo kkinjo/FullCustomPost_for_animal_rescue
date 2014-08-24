@@ -4,8 +4,24 @@
 =======
 
 
+2014/08/24:[WIP]brashup_query_condition
+--------------------------------------------------
+BUG: 表示画面:「ステータス履歴」が適切に動作しない。JSON に対応していない。
 
-2014/08/24:[WIP]bugfix_status_history_not_view_fine
+GIT: git checkout -b brashup_query_condition
+GIT: git status
+GIT: git push --set-upstream origin brashup_query_condition
+
+[SOL] 表示画面:「ステータス履歴」を JSON に対応させる。
+
+
+GIT: git checkout develop
+GIT: git merge brashup_query_condition
+GIT: git branch -d brashup_query_condition
+
+
+
+2014/08/24:[SOL]bugfix_status_history_not_view_fine
 --------------------------------------------------
 BUG: 表示画面:「ステータス履歴」が適切に動作しない。JSON に対応していない。
 
@@ -13,14 +29,16 @@ GIT: git checkout -b bugfix_status_history_not_view_fine
 GIT: git status
 GIT: git push --set-upstream origin bugfix_status_history_not_view_fine
 
-[SOL] JSON に対応させる。
+[SOL] 表示画面:「ステータス履歴」を JSON に対応させる。
+
+
+GIT: git checkout develop
+GIT: git merge bugfix_status_history_not_view_fine
+GIT: git branch -d bugfix_status_history_not_view_fine
 
 
 
-
-
-
-2014/08/03:[WIP]bugfix_status_history_not_workfine
+2014/08/03:[SOL]bugfix_status_history_not_workfine
 --------------------------------------------------
 BUG: 登録画面:入力項目「ステータス履歴」が適切に動作しない。機能が足りない
 
