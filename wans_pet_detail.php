@@ -719,7 +719,7 @@ class Wpd_class
 		   <input class="status_history_array"	status_history="status"	value="" />
 		   <a name="fcpfar_add_status_history">[+追加]</a> <a name="fcpfar_del_status_history">[-削除]</a>
 	   </div>
-	   <input type="text" name="status_history" value='<?php echo $status_history ?>' size="2000">
+	   <input type="text" name="status_history" value='<?php echo $status_history ?>' size="2000" style="display: none;">
 
 	   <div class="wpd_coltitle_box">
 		   <div class="wpd_coltitle_row">

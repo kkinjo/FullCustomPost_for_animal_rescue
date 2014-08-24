@@ -5,15 +5,15 @@
 
 
 
-2014/08/24:[WIP]
+2014/08/24:[WIP]bugfix_status_history_not_view_fine
 --------------------------------------------------
 BUG: 表示画面:「ステータス履歴」が適切に動作しない。JSON に対応していない。
 
-GIT: git checkout -b bugfix_status_history_not_workfine
+GIT: git checkout -b bugfix_status_history_not_view_fine
 GIT: git status
-GIT: git push --set-upstream origin bugfix_status_history_not_workfine
+GIT: git push --set-upstream origin bugfix_status_history_not_view_fine
 
-[ACP] JSON に対応させる。
+[SOL] JSON に対応させる。
 
 
 
