@@ -1,9 +1,32 @@
 
 
 2014/08/03:[NEW]bugfix_googledrive_photo_view_opti
+=======
+
+2014/08/03:[WIP]bugfix_status_history_not_workfine
 --------------------------------------------------
-BUG: �O�[�O���h���C�u�̉摜�\���ɖ�肠��B�摜������������ꍇ�A�����ȉ摜�܂ŕ\�����Ă��܂��B
+BUG: 登録画面:入力項目「ステータス履歴」が適切に動作しない。機能が足りない
+
+GIT: git checkout -b bugfix_status_history_not_workfine
+GIT: git status
+GIT: git push --set-upstream origin bugfix_status_history_not_workfine
+
+[SOL] INPUT を追加するボタンを設置する。
+[SOL] 現在のステータスを履歴にプッシュするボタンを設置する。
+[SOL] サーバー側でもステータス履歴 をソートさせる。
+[SOL] Jscript でステータス履歴 をソートさせる。
+[SOL] $status_history を hidden にして、Javascript側で 表示されている INPUT から change で自動生成する。
+[SOL] 直近の変更オブジェクトの色付けて、別の要素が選択されたら色を抜く
+[SOL] 『ワンズ登録日』はグレーアウトする。
 
 
 
-2014/08/03 : �t�@�C���쐬�B
+
+
+2014/08/03:[SOL]bugfix_googledrive_photo_view_opti
+--------------------------------------------------
+BUG: グーグルドライブの画像表示に問題あり。画像が一つしか無い場合、無効な画像まで表示してしまう。
+
+
+
+2014/08/03 : ファイル作成。
