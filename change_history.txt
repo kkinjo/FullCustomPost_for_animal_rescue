@@ -3,6 +3,23 @@
 2014/08/03:[NEW]bugfix_googledrive_photo_view_opti
 =======
 
+
+
+2014/08/24:[WIP]
+--------------------------------------------------
+BUG: 表示画面:「ステータス履歴」が適切に動作しない。JSON に対応していない。
+
+GIT: git checkout -b bugfix_status_history_not_workfine
+GIT: git status
+GIT: git push --set-upstream origin bugfix_status_history_not_workfine
+
+[ACP] JSON に対応させる。
+
+
+
+
+
+
 2014/08/03:[WIP]bugfix_status_history_not_workfine
 --------------------------------------------------
 BUG: 登録画面:入力項目「ステータス履歴」が適切に動作しない。機能が足りない
