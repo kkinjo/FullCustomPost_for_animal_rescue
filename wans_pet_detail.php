@@ -140,7 +140,7 @@ class Wpd_class
 							"里親、募集しています"
 							,"トライアル中です"
 							,"譲渡されました"
-							,"里親募集一時停止"
+							,"里親募集一時停止(非公開)"
 							,"迷子、保護しています"
 							,"迷子になりました。探しています。"
 							)
@@ -315,71 +315,70 @@ class Wpd_class
  * source:wpd_trait_DMI.php
  */
 
-	function Aa_DMI_insert_update($post_id) 
-	{
-	if (!isset($_POST[$this->table_name])) return;
+	function Aa_DMI_insert_update($post_id) 	{
+		
+		if (!isset($_POST[$this->table_name])) return;
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )  return;
+		if ( !wp_verify_nonce( $_POST[$this->table_name], plugin_basename( __FILE__ ) ) )  return;
+		
+		global $wpdb;
+		global $post;
+		
+		//リビジョンを残さない
+		if ($post->ID != $post_id) return;
+		
+		//カスタム投稿タイプ『pet_detail』でないと動作しない。
+		if ($post->post_type != 'pet_detail') return;
 
-	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )  return;
-	  if ( !wp_verify_nonce( $_POST[$this->table_name], plugin_basename( __FILE__ ) ) )  return;
-
-	global $wpdb;
-	global $post;
-
-	//リビジョンを残さない
-	if ($post->ID != $post_id) return;
-
-	//カスタム投稿タイプ『pet_detail』でないと動作しない。
-	if ($post->post_type != 'pet_detail') return;
-
-
-	// $temp_列名を操作するために、はじめにレコードをとっておく
-	$wpd_data_set = $wpdb->get_results(
-	  $wpdb->prepare( "SELECT * FROM
-		".$this->table_name. " WHERE
-		post_id = %d", $post_id
-	  )
-	);
-	$wpd_data_set = isset($wpd_data_set[0]) ? $wpd_data_set[0] : null;
-	$set_arr = array();
-
-	if($wpd_data_set){
-		// 保存するための配列 $set_arr に $temp_列名を入れるための処理
-
-		foreach($wpd_data_set as $colname => $value){
-			if($colname == "post_id"){}
-			else{
-				$set_arr[$colname]=$_POST[$colname];
+		// $temp_列名を操作するために、はじめにレコードをとっておく
+		$wpd_data_set = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM ".$this->table_name. " WHERE post_id = %d", $post_id ) );
+		$wpd_data_set = isset($wpd_data_set[0]) ? $wpd_data_set[0] : null;
+		$set_arr = array();
+		
+		if($wpd_data_set){
+		
+			// 保存するための配列 $set_arr に $temp_列名を入れるための処理
+			foreach($wpd_data_set as $colname => $value){
+				if($colname == "post_id"){}
+				elseif($colname == "status_history"){
+					$set_arr[$colname]=str_replace('\"','"',$_POST[$colname]);
 				}
-			$$colname = isset($value) ? $value : null;
+				else{
+					$set_arr[$colname]=$_POST[$colname];
+				}
+				$$colname = isset($value) ? $value : null;
 			}
 
-	} else {
-		$get_colname = $wpdb->get_results("show columns from ".$this->table_name ,ARRAY_A );
-		foreach ($get_colname as $key => $value) {
-			if($value["Field"] == "post_id"){}
-			else{
-				$set_arr[$value["Field"]]=$_POST[$value["Field"]];
+		} 
+		else {
+			$get_colname = $wpdb->get_results("show columns from ".$this->table_name ,ARRAY_A );
+			foreach ($get_colname as $key => $value) {
+				if($value["Field"] == "post_id"){}
+				else{
+					$set_arr[$value["Field"]]=$_POST[$value["Field"]];
+				}
 			}
+		}
+
+		//DEBUG用
+		//exit( kkdump( $set_arr ) );
+		//レコードがなかったら新規追加あったら更新
+		if (empty($wpd_data_set)) {
+			//$debug_word = var_export($set_arr,true);
+			$set_arr['post_id'] = $post_id;
+			$wpdb->insert( $this->table_name, $set_arr);
+		} 
+		else {
+			$wpdb->update( $this->table_name, $set_arr, array('post_id' => $post_id));
+		}
+		$wpdb->show_errors();
+	
+		if( $photo !== $set_arr['photo'] || $photo_coordinates !== $set_arr['photo_coordinates']){
+			$this->wpd_update_photo($set_arr['photo_coordinates'],$set_arr['photo'],$post_id);
 		}
 	}
 
-	//レコードがなかったら新規追加あったら更新
-	if (empty($wpd_data_set)) {
-		//$debug_word = var_export($set_arr,true);
-		$set_arr['post_id'] = $post_id;
-		$wpdb->insert( $this->table_name, $set_arr);
-	} else {
-		$wpdb->update( $this->table_name, $set_arr, array('post_id' => $post_id));
-	}
-	$wpdb->show_errors();
 	
-	if( $photo !== $set_arr['photo'] || $photo_coordinates !== $set_arr['photo_coordinates']){
-		  $this->wpd_update_photo($set_arr['photo_coordinates'],$set_arr['photo'],$post_id);
-   }
-    //DEBUG用
-	//exit( var_dump( $_POST[''] ) );
-  }
-
 	function Aa_DMI_delete($post_id) {
 	global $wpdb;
 	$wpdb->query( $wpdb->prepare( "DELETE FROM $this->table_name WHERE post_id = %d", $post_id) );
@@ -512,13 +511,6 @@ class Wpd_class
 			$meta_id = $wpd_new_wansid_res[0]->value;
 		}
                 
-  
-                /* 配列カウント */
-		if( !is_null ( $status_history ) ){
-			$status_history = preg_replace('/,+\z/',"",$status_history);
-			$status_history_array = explode(',', $status_history);
-			$status_history_count = count($status_history_array) ;
-			}
 			
 		if( !is_null ( $related_url ) ){
 			$related_url = preg_replace('/,+\z/',"",$related_url);
@@ -644,7 +636,8 @@ class Wpd_class
 											"里親、募集しています"=>"里親、募集しています"
 											,"トライアル中です"=>"トライアル中です"
 											,"譲渡されました"=>"譲渡されました"
-											,"里親募集一時停止"=>"里親募集一時停止(非公開)"
+											,"里親募集一時停止(非公開)"=>"里親募集一時停止(非公開)"
+											,""=>""
 											),
 										"迷子系" => array(
 											"迷子、保護しています"=>"迷子、保護しています"
@@ -652,12 +645,12 @@ class Wpd_class
 											)
 										);
 							
-								foreach ( $now_status_valueset as $key => $value ) {									
-									echo "<optgroup label='".$key."'>";
-									foreach ( $value as $select_key => $select_value ) {
-										echo '<option value="'.$select_key.'"';
-										if($key == $now_status)  echo "selected";
-										echo '>'.$select_value.'</option>';
+								foreach ( $now_status_valueset as $nsv_key => $nsv_value ) {									
+									echo "<optgroup label='".$nsv_key."'>";
+									foreach ( $nsv_value as $select_key => $select_value ) {
+										echo '<option value="'.$select_key.'"   fcpar_s_value="now_status" ';
+										if($now_status == $select_value)  echo " selected ";
+										echo ' >'.$select_value.'</option>';
 									}
 									echo "</optgroup>";
 								} 
@@ -665,20 +658,68 @@ class Wpd_class
 						?>
 				   </select>
 			   </div>
-			   <div class="wpd_col_data"><input name="recent_status_change"  class="wpd_input_class wpd_tdp"  value="<?php echo $recent_status_change ?>" /></div>
+			   <div class="wpd_col_data"><input name="recent_status_change"  class="wpd_input_class wpd_tdp"  value="<?php echo $recent_status_change ?>" /> <a name="fcpfar_push_to_history">[履歴に移動]</a></div>
 		   </div>
 	   </div>
 	   <div>ステータス履歴</div>
+	   <div id="status_history">
+	
 			<?php
+			// データの正規化 
+			// もし$status_history が空の場合は 現在のステータスを入力する。
+			if( empty( $status_history ) ){
+				$status_history_array = array( );
+			}else{
+				$status_history_array = json_decode($status_history,TRUE );
+				
+			}
+			// JSON を 連想配列に変換し、			
+			
+			
+			// ワンズ登録日と現在のステータスを追加
+			$status_history_array[] = array('date'=>$wans_reg_date,'status'=>'ワンズ登録日');
+			$status_history_array[] = array('date'=>$recent_status_change,'status'=>$now_status,);
+						
+			// 重複を排除して、ソートし、
+			$status_history_array_u = array();
+			foreach ( $status_history_array as $fcpfar_sha_key => $fcpfar_sha_value ) {
+				if( 
+					in_array ( $fcpfar_sha_value,$status_history_array_u )
+					||
+					( empty( $fcpfar_sha_value['date'] ) && empty( $fcpfar_sha_value['status'] ) )
+				){}
+				else{
+					$status_history_array_u[] = $fcpfar_sha_value;
+					$fcpfar_sha_sort_date[$fcpfar_sha_key] = $fcpfar_sha_value['date'];
+					$fcpfar_sha_sort_status[$fcpfar_sha_key] = $fcpfar_sha_value['status'];
+				}				
+			}
+			//kkdump($status_history_array_u);
+			// ソートして置き換え、空行を追加。
+			array_multisort($fcpfar_sha_sort_date,SORT_ASC,$status_history_array_u);
+			$status_history_array = $status_history_array_u;
+			$status_history_array[] = array('status'=>'','date'=>'');
+			//念のためもう一度 JSON へ。
+			$status_history = json_encode($status_history_array);
+			// 正規化はここまで
+			
+			
+			foreach ( $status_history_array as $fcpfar_sha_key => $fcpfar_sha_value ) {
+				echo '<div class="status_history_array" >';
+				echo '	<input class="status_history_array wpd_tdp" status_history="date" value="'.$fcpfar_sha_value['date'].'" />'
+					. ' <input class="status_history_array"	status_history="status"	value="'.$fcpfar_sha_value['status'].'" /> '
+						. '<a name="fcpfar_add_status_history">[+追加]</a> <a name="fcpfar_del_status_history">[-削除]</a> ';
+				echo '</div>';
 
-			for ($i = 0; $i <= $status_history_count+1; $i+2) {
-
-				echo '<div><input class="status_history_array"	name="status_history_array'.$i.'"	value="'.$status_history_array[$i].'" />';
-				echo '<input class="status_history_array wpd_tdp" name="status_history_array'.$i++.'"  value="'.$status_history_array[$i++].'" /></div>';
-
-				}
+			}
 				?>
-	   <!--<input type="text" name="status_history" value="<?php echo $status_history ?>" size="2000">-->
+		</div>
+	   <div id="status_history_array_template" >
+		   <input class="status_history_array wpd_tdp" status_history="date" value="" />
+		   <input class="status_history_array"	status_history="status"	value="" />
+		   <a name="fcpfar_add_status_history">[+追加]</a> <a name="fcpfar_del_status_history">[-削除]</a>
+	   </div>
+	   <input type="text" name="status_history" value='<?php echo $status_history ?>' size="2000">
 
 	   <div class="wpd_coltitle_box">
 		   <div class="wpd_coltitle_row">
