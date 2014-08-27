@@ -420,3 +420,22 @@ a.wpd_a{
     color: #E56B27;
 }
 
+
+
+.now_status_bar{
+    display: table;
+}
+
+.now_status_bar > label{
+    display: table-cell;
+    padding: 3px;
+    word-wrap: keep-all  ;
+    width: 14%;
+    border-style: solid;
+    border-width: 0 1px 0 1px;
+    border-color: white;
+    background-color: #EEA9A9;
+    color: white;
+    vertical-align: middle;
+    text-align: center;        
+}

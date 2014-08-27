@@ -76,9 +76,6 @@ $wpd_fetched_archives_count = $wpd_instance->wpd_get_archives_count(
 		<?php 
 		/*
 		 * 【1-2】検索操作パネルを表示
-		 * !!やること!!
-		 * 1. query_box に表示モード:view_mode設定を加える(ログインユーザーのみで)
-		 * 2. あと、クエリ生成JSでも設定を引き継ぐ必要あり!
 		 */
 			echo $wpd_instance->wpd_query_condtions['query_box'];  
 			

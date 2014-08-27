@@ -40,7 +40,7 @@ jQuery(window).load( function () {
 
 
 function view_conditions(target_id){
-    jQuery(".view_line").slideUp();
+    jQuery(".condition_data").children(".view_line").slideUp();
     if(jQuery("#condition_view").css('display') === 'none') {
         jQuery("#condition_view").slideDown();
     }
