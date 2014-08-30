@@ -616,7 +616,7 @@ class Wpd_class
 						?>
 				   </select>
 			   </div>
-			   <div class="wpd_col_data"><input class="wpd_input_class" name="weight"				 value="<?php echo $weight ?>" ajax_autocomplete /><a class="kick_ajax_autocomplete" value="weight" search="off" >参考値</a></div>
+			   <div class="wpd_col_data"><input class="wpd_input_class" name="weight"				 value="<?php echo $weight ?>" ajax_autocomplete /><a class="kick_ajax_autocomplete" value="weight" search="off" >参考値</a> kg</div>
 		   </div>
 	   </div>
 
@@ -1624,7 +1624,7 @@ define('SAVEQUERIES', 1);
 add_action('shutdown', 'on_shutdown');
 
 function on_shutdown() {
-	if (is_post_type_archive('pet_detail')) {
+	if ( is_post_type_archive('pet_detail') ) {
 	global $wpdb;
 	echo '<table class="wp-list-table widefat fixed posts">';
 	echo '<thead><th>SQL</th><th>Time</th><th>Caller</th></thead>';

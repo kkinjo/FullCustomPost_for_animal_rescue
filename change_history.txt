@@ -12,8 +12,8 @@ GIT: git checkout -b brashup_query_condition
 GIT: git status
 GIT: git push --set-upstream origin brashup_query_condition
 
-[ACP] status_bar を追加する。
-
+[SOL] status_bar を追加する。
+[ACP] 検索条件の引き継ぎ。
 
 
 GIT: git checkout develop

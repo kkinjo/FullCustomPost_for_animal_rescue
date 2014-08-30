@@ -33,8 +33,9 @@ jQuery(window).load( function () {
           });
       });
         
-        
-      
+     /*
+      * label を動作させる。
+      */
   });
 });
 
