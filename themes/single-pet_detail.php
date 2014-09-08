@@ -55,7 +55,10 @@ $$colname = isset($value) ? $value : null;
     $wpd_age = str_replace("-", "",$birthyear);
     $wpd_age = (int) ((date('Ymd')-$wpd_age)/10000);
     
-$wpd_instance->wpd_header(); ?>
+$wpd_instance->wpd_header(); 
+
+
+?>
 
 <!-- single.php -->
 <div class="grid_9 push_3" id="main">
@@ -106,7 +109,7 @@ $wpd_instance->wpd_header(); ?>
             <div class="item"><div class="item_name">ワクチン</div><div class="item_data_s"><?php echo $vaccine; ?></div></div>
             <div class="item"><div class="item_name">健康状態</div><div class="item_data_s"><?php echo $health_condition; ?></div></div>
             <div class="item"><div class="item_name">大きさ</div><div class="item_data_s"><?php echo $Breeds_size; ?></div></div>
-            <div class="item"><div class="item_name">体重(おおよそ)</div><div class="item_data_s"><?php echo $weight; ?></div></div>
+            <div class="item"><div class="item_name">体重(おおよそ)</div><div class="item_data_s"><?php echo $weight; ?> kg</div></div>
         </div>
     </div>
 
@@ -261,17 +264,26 @@ $wpd_instance->wpd_header(); ?>
 					endif; /* ループ終了 */ 
 					
 					$wpd_instance->wpd_footer();
+					
+
 				?>
 			
     </article>
     
     
     <div class="box-bottom"></div>
-        
+<?php 
+echo "referer<textarea>";
+$wpd_referer = wp_get_referer();
+kkdump($wpd_referer);
+kkdump($_SERVER);
+echo "</textarea>";
+?>        
 </div>
 <!-- main -->
 <!-- /single.php -->
 <?php 
+				
 	$wpd_instance->wpd_sidebar();
 	
 	get_footer(); 

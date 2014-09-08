@@ -146,8 +146,9 @@ class Wpd_class
 							)
 					);
 			
-			$this->wpd_query_condtions = $this->wpd_query_condtion_setting($this->sia);
 			
+			// メインクエリの変更
+			add_filter('posts_search'		, array($this, 'Af_posts_search'));
 			add_filter('posts_join'		, array($this, 'Af_query_conditon_join'));
 			add_filter('posts_where'	   , array($this, 'Af_query_conditon_where'));
 			add_filter('posts_orderby'	 , array($this, 'Af_query_conditon_orderby'));
@@ -615,7 +616,7 @@ class Wpd_class
 						?>
 				   </select>
 			   </div>
-			   <div class="wpd_col_data"><input class="wpd_input_class" name="weight"				 value="<?php echo $weight ?>" ajax_autocomplete /><a class="kick_ajax_autocomplete" value="weight" search="off" >参考値</a></div>
+			   <div class="wpd_col_data"><input class="wpd_input_class" name="weight"				 value="<?php echo $weight ?>" ajax_autocomplete /><a class="kick_ajax_autocomplete" value="weight" search="off" >参考値</a> kg</div>
 		   </div>
 	   </div>
 
@@ -1282,6 +1283,7 @@ class Wpd_class
 			$wpd_requested_order_by_array[$wpd_url_order_by_array[$i]] = $wpd_url_order_by_array[++$i];
 		}
 
+		
 		/* ***********************************
 		 * ■メイン処理
 		 * 1.value_set の取得
@@ -1305,17 +1307,14 @@ class Wpd_class
 				//もし checkbox でも value_set がある場合は、実際に登録されている値を追加して、
 				//重複を排除する。				
 				if ( is_array ( $t_arry["value_set"] ) ){
-					foreach ( $wpd_requested_order_by_array as $key => $value ) {
-						$t_arry["value_set"][] = $value;
+					foreach ( $registed_valuesets as $rv_key => $rv_value ) {
+						$t_arry["value_set"][] = $rv_value;
 					}
 					$t_arry["value_set"] = array_unique($t_arry["value_set"]);
 				}
 				else{
 					$t_arry["value_set"] = $registed_valuesets;
 				}
-				
-				
-				
 				
 			}
 
@@ -1432,77 +1431,141 @@ class Wpd_class
 		 * 列ごとに要素生成
 		 */
 		foreach($sia as $sia_name => $t_arry){
+			if( $sia_name != "now_status"){
+				/* 各項目トップレベル + プレビュー領域 */
+				$$t_arry['condition_type'] .= "<span class='button-dropdown' data-buttons='dropdown' type=".$t_arry[input_type]." id='". $sia_name ."'>";
+				$$t_arry['condition_type'] .= "		<span wpd_q_id='".$sia_name."' wpd_q_input_type=". $t_arry[input_type] ." class='button button-rounded button-flat-primary'>".$t_arry['discription'];
+				$$t_arry['condition_type'] .= "			<span class='now_conditionicon_preview'></span>";
+				$$t_arry['condition_type'] .= "		</span>";
 
-			/* 各項目トップレベル + プレビュー領域 */
-			$$t_arry['condition_type'] .= "<span class='button-dropdown' data-buttons='dropdown' type=".$t_arry[input_type]." id='". $sia_name ."'>";
-			$$t_arry['condition_type'] .= "		<span wpd_q_id='".$sia_name."' wpd_q_input_type=". $t_arry[input_type] ." class='button button-rounded button-flat-primary'>".$t_arry['discription'];
-			$$t_arry['condition_type'] .= "			<span class='now_conditionicon_preview'></span>";
-			$$t_arry['condition_type'] .= "		</span>";
+				/* radio ボタンの場合 */
+				if( $t_arry[input_type] === "radio" ){
+					$$t_arry['condition_type'] .= "<ul>";
 
-			/* radio ボタンの場合 */
-			if( $t_arry[input_type] === "radio" ){
-				$$t_arry['condition_type'] .= "<ul>";
+					foreach($t_arry['value_set'] as $value => $text){
+						$value_checked = "";
+						$default_value = "";
 
-				foreach($t_arry['value_set'] as $value => $text){
-					$value_checked = "";
-					$default_value = "";
+						if( $value === $t_arry['checked'] ){$value_checked = "checked";}else{$value_checked = "";}
+						if( $value === $t_arry['default'] ){$default_value = "default";}else{$default_value = "";}
 
-					if( $value === $t_arry['checked'] ){$value_checked = "checked";}else{$value_checked = "";}
-					if( $value === $t_arry['default'] ){$default_value = "default";}else{$default_value = "";}
+						$$t_arry['condition_type'] .= "<li class='item_list'>".$text;
+						$$t_arry['condition_type'] .= "	<input type='radio'  class='".$t_arry['condition_type']."_condition query_condition' name='".$sia_name."' value='".$value."' ".$value_checked." ".$default_value.">";
+						$$t_arry['condition_type'] .= "</li>";
+					}
 
-					$$t_arry['condition_type'] .= "<li class='item_list'>".$text;
-					$$t_arry['condition_type'] .= "	<input type='radio'  class='".$t_arry['condition_type']."_condition query_condition' name='".$sia_name."' value='".$value."' ".$value_checked." ".$default_value.">";
-					$$t_arry['condition_type'] .= "</li>";
+					$$t_arry['condition_type'] .= "</ul>";
 				}
 
-				$$t_arry['condition_type'] .= "</ul>";
-			}
+				/* チェックボックスの場合 */
+				elseif( $t_arry["input_type"] ==="checkbox" ) {
 
-			/* チェックボックスの場合 */
-			elseif( $t_arry["input_type"] ==="checkbox" ) {
+					foreach($t_arry["value_set"] as $colname => $value){
+						if( $value != "") {
 
-				foreach($t_arry["value_set"] as $colname => $value){
-					if( $value != "") {
+							if( in_array($value , $t_arry['checked'] )){
+								$value_checked = "checked";
+							}
+							else{
+								$value_checked = "";
+							}
 
-						if( in_array($value , $t_arry['checked'] )){
-							$value_checked = "checked";
+							if( in_array($value , $t_arry['default'] )){
+								$default_value = "default";
+							}
+							else{
+								$default_value = "";
+							}
+							${$sia_name._items} .= "<label class='button button-rounded button-flat-primary'>";
+							${$sia_name._items} .= "	<input type='checkbox'  class='".$t_arry['condition_type']."_condition query_condition' name='".$sia_name."' value='".$value."' ".$value_checked." ".$default_value.">".$value;
+							${$sia_name._items} .= "</label>";
 						}
-						else{
-							$value_checked = "";
-						}
-
-						if( in_array($value , $t_arry['default'] )){
-							$default_value = "default";
-						}
-						else{
-							$default_value = "";
-						}
-						${$sia_name._items} .= "<label class='button button-rounded button-flat-primary'>".$value;
-						${$sia_name._items} .= "	<input type='checkbox'  class='".$t_arry['condition_type']."_condition query_condition' name='".$sia_name."' value='".$value."' ".$value_checked." ".$default_value.">";
-						${$sia_name._items} .= "</label>";
+					}
+					
+					/* 別の領域に各項目を出力させる */
+					$wpd_condition_view .="<div id='".$sia_name."_items_view' class='view_line' line_name=".$sia_name.">";
+					$wpd_condition_view .="	<span class='button button-flat all_item' target='".$sia_name."'>すべて</span>";
+					$wpd_condition_view .=	${$sia_name._items};
+					$wpd_condition_view .="</div>";
 					}
 				}
-				/* 別の領域に各項目を出力させる */
-				$wpd_condition_view .="<div id='".$sia_name."_items_view' class='view_line' line_name=".$sia_name.">";
-				$wpd_condition_view .="	<span class='button button-flat all_item' target='".$sia_name."'>すべて</span>";
-				$wpd_condition_view .=	${$sia_name._items};
-				$wpd_condition_view .="</div>";
-			}
+				else{
+						$par_width = 100 / count($t_arry["value_set"]) ;
+						foreach($t_arry["value_set"] as $colname => $value){
+							if( $value != "") {
+								if( in_array($value , $t_arry['checked'] )){
+									$value_checked = "checked";
+								}
+								else{
+									$value_checked = "";
+								}
 
-			$$t_arry['condition_type'] .= "</span>";
+								if( in_array($value , $t_arry['default'] )){
+									$default_value = "default";
+								}
+								else{
+									$default_value = "";
+								}
+								
+								if( $value == "里親募集一時停止(非公開)" ){
+									if ( is_user_logged_in() ) {
+										${$sia_name._items} .= "<label style='width=".$par_width."%;'>";
+										${$sia_name._items} .= "	<input type='checkbox'  class='".$t_arry['condition_type']."_condition query_condition' name='".$sia_name."' value='".$value."' ".$value_checked." ".$default_value."><span>".$value;
+										${$sia_name._items} .= "</span></label>";
+									}
+								}
+								else{
+									${$sia_name._items} .= "<label style='width=".$par_width."%;'>";
+									${$sia_name._items} .= "	<input type='checkbox'  class='".$t_arry['condition_type']."_condition query_condition' name='".$sia_name."' value='".$value."' ".$value_checked." ".$default_value."><span>".$value;
+									${$sia_name._items} .= "</span></label>";
+								}
+							}
+						}
+						$status_tab_bar .= "	<div id='".$sia_name."_items_view' class='now_status_bar view_line' line_name=".$sia_name.">";
+						$status_tab_bar .=	${$sia_name._items};
+						$status_tab_bar .= "	</div>";
+					}
 
+				$$t_arry['condition_type'] .= "</span>";
+							
 		}
 
-		$conditions_suffix="	</div></div>";
 
+		$conditions_suffix="	</div></div>";
+		
+		/* ***********************************
+		 * ステータスバーの作成
+		 * 中西さんからのリクエスト
+		 * 基本ステータスだけのタブバー
+		 */
+		
+		$status_tab_bar_items = array();
+		$ns_vs = $sia['now_status']['value_set'];
+		foreach ( $ns_vs  as $sia_ns_key => $sia_ns_value ) {
+			if( $sia_ns_value == "里親募集一時停止(非公開)"){
+				//$wpd_temp_user_check = wp_get_current_user();
+				//if ( $user->exists() ) {
+				//	$status_tab_bar_items[] = $sia_ns_value;
+				//}
+			}else{
+				$status_tab_bar_items[] = $sia_ns_value;
+			}
+		}
+		$par_width = 100 / count($status_tab_bar_items) ;
+		foreach ( $status_tab_bar_items as $stbi_key => $stbi_value ) {
+			//$status_tab_bar .= "<div style='display: inline-block; min-width=".$par_width."%;margin:3px;word-wrap: break-word ;'>$stbi_value</div>";
+		}
+		//$status_tab_bar .= "</div>";
+		
 		/* ***********************************
 		 * 仕上げ
 		 */
-		$wpd_query_box ="<form action='".home_url($this->wpd_category_name)."' method='get' name='wpd_query_condition_from'>";
+		$wpd_query_box = $status_tab_bar;
+		$wpd_query_box .="<form action='".home_url($this->wpd_category_name)."' method='get' name='wpd_query_condition_from'>";
 		$wpd_query_box .="<div id='query_conditon_block'>";
-		$wpd_query_box .=$order_condition_prefix.$order_by.$conditions_suffix;
 		$wpd_query_box .=$where_condition_prefix.$where.$conditions_suffix;
-		$wpd_query_box .=$wpd_condition_view.$conditions_suffix;
+		$wpd_query_box .=$wpd_condition_view.$conditions_suffix;		
+		$wpd_query_box .=$order_condition_prefix.$order_by.$conditions_suffix;
 		$wpd_query_box .="</div><div id='query_submit'>";
 		$wpd_query_box .="<label for='view_mode' class='button button-flat-caution wpd_query_condition_from_submit' >一覧表示<input type=checkbox name=view_mode id=view_mode value='detail_list' ".$detail_list_checked."></label>";
 		$wpd_query_box .="<input class='button button-flat-action wpd_query_condition_from_submit' type='button' onclick='wpd_query_js()' value='検索'>";
@@ -1514,6 +1577,11 @@ class Wpd_class
 		return array('where'=>$checked_for_query_where,'order'=>$checked_for_query_order,'query_box'=>$wpd_query_box);
 	}
 
+	function Af_posts_search($search){
+		
+	    $this->wpd_query_condtions = $this->wpd_query_condtion_setting($this->sia);
+		return $search;
+	}
 	function Af_query_conditon_join($join){
 		global $wpdb;
 		
@@ -1553,10 +1621,10 @@ $wpd_instance = new Wpd_class;
 
 define('SAVEQUERIES', 1);
 
-//add_action('shutdown', 'on_shutdown');
+add_action('shutdown', 'on_shutdown');
 
 function on_shutdown() {
-	if (is_post_type_archive('pet_detail')) {
+	if ( is_post_type_archive('pet_detail') ) {
 	global $wpdb;
 	echo '<table class="wp-list-table widefat fixed posts">';
 	echo '<thead><th>SQL</th><th>Time</th><th>Caller</th></thead>';

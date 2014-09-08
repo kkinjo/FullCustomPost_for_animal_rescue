@@ -97,7 +97,7 @@
 
 
     //DELEGATE CLICK EVENT FOR DROPDOWN MENUS
-    $(document).on('click', '[data-buttons=dropdown]', function(e) {
+    $(document).on('click touchend', '[data-buttons=dropdown]', function(e) {
         var $dropdown = $(e.currentTarget);
         var drop_down_type = $dropdown.attr("type");
         if(drop_down_type === "radio"){
@@ -114,7 +114,8 @@
 
 
     //IGNORE CLICK EVENTS FROM DISPLAY BUTTON IN DROPDOWN
-    $(document).on('click', '[data-buttons=dropdown] > a', function(e) {
+    $(document).on('click touchend', '[data-buttons=dropdown] > a', function(e) {
+        
         e.preventDefault();
     });
 
