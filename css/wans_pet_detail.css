@@ -420,3 +420,7 @@ a.wpd_a{
     color: #E56B27;
 }
 
+a.a-clear,a.a-clear:hover{
+    color: white;
+    text-decoration: none;
+}

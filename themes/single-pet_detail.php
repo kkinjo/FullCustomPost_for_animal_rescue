@@ -20,6 +20,7 @@ $$colname = isset($value) ? $value : null;
     /* 配列カウント */
     if(!empty($status_history)){
 		$status_history_array =  json_decode($status_history,TRUE );
+		$status_history_array = is_array($status_history_array) ? $status_history_array : array();
 		$status_history_html = "";
 		foreach ( $status_history_array as $sha_key => $sha_value ) {
 			
@@ -240,7 +241,10 @@ $wpd_instance->wpd_header(); ?>
         </div>
     </div>
     <?php endif; ?>
-
+	<div class="grid_7">
+		<a href="http://onesdog.net/family/list/%E6%8E%B2%E8%BC%89%E3%83%AF%E3%83%B3%E3%82%B3%E3%81%AB%E9%96%A2%E3%81%99%E3%82%8B%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%81%9B/?pet_name=<?php echo $pet_name; ?>&pet_detail_url=<?php echo $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]; ?>" target="_blank" class="button button-rounded button-flat-primary a-clear" style="">この子についてのお問い合わせフォーム</a>
+		
+	</div>
 
 </div>
 

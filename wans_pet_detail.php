@@ -1119,13 +1119,13 @@ class Wpd_class
 
 	function wpd_get_archives($wpd_cate_page,$wpd_cate_where=null,$wpd_cate_order=null,$view_mode=null) {
 		global $wpdb;
-		$wpd_cate_select_from = "SELECT * FROM ".$this->table_name;
+		$wpd_cate_select_from = "SELECT * FROM ".$this->table_name." LEFT JOIN $wpdb->posts ON $wpdb->posts.ID = $this->table_name.post_id";
 		if( is_null ( $wpd_cate_where ) ) {
-			$wpd_cate_where = "";
+			$wpd_cate_where = "where $wpdb->posts.post_status = 'publish' ";
 		}
 		else{
 			
-			$wpd_cate_where = "where ".$wpd_cate_where;
+			$wpd_cate_where = "where $wpdb->posts.post_status = 'publish' and ".$wpd_cate_where;
 		}
 		
 
@@ -1149,13 +1149,13 @@ class Wpd_class
 
 	function wpd_get_archives_count($wpd_cate_where=null,$wpd_cate_order=null) {
 		global $wpdb;
-		$wpd_cate_select_from = "SELECT count(*) FROM ".$this->table_name;
+		$wpd_cate_select_from = "SELECT count(*) FROM ".$this->table_name." LEFT JOIN $wpdb->posts ON $wpdb->posts.ID = $this->table_name.post_id";
 		if( is_null ( $wpd_cate_where ) ) {
-			$wpd_cate_where = "";
+			$wpd_cate_where = "where $wpdb->posts.post_status = 'publish' ";
 		}
 		else{
 			
-			$wpd_cate_where = "where ".$wpd_cate_where;
+			$wpd_cate_where = "where $wpdb->posts.post_status = 'publish' and ".$wpd_cate_where;
 		}		
 
 		if( is_null ( $wpd_cate_order ) ) {
@@ -1570,6 +1570,17 @@ function on_shutdown() {
 	echo '</table>';
 		}
 }
+
+function af_add_wpd_to_contact_form_7($tag){
+  if ( ! is_array( $tag ) )
+  return $tag;
+  $name = $tag['name'];
+  if($name == 'pet_name') $tag['values'] = (array) $_GET['pet_name'];
+  if($name == 'pet_detail_url') $tag['values'] = (array) $_GET['pet_detail_url'];
+  return $tag;
+}
+add_filter('wpcf7_form_tag', 'af_add_wpd_to_contact_form_7');
+
 
 function kkdump($t_v){
 	echo "<PRE>";

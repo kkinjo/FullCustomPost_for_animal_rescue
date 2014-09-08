@@ -6,13 +6,14 @@
 
 2014/08/24:[WIP]brashup_query_condition
 --------------------------------------------------
-BUG: 表示画面:「ステータス履歴」が適切に動作しない。JSON に対応していない。
+FIX: 検索BOX から ステータスだけを目立たせる
 
 GIT: git checkout -b brashup_query_condition
 GIT: git status
 GIT: git push --set-upstream origin brashup_query_condition
 
-[SOL] 表示画面:「ステータス履歴」を JSON に対応させる。
+[SOL] status_bar を追加する。
+[ACP] 検索条件の引き継ぎ。
 
 
 GIT: git checkout develop
