@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 	<meta charset="UTF-8">
-	<title><?php wp_title('::', true, 'right'); ?> <?php bloginfo('name'); ?></title>
+	
 	<link rel="icon" href="<?php echo get_template_directory_uri(); ?>/images/favicon.ico" type="image/x-icon">
 	<link rel="shortcut icon" href="<?php echo get_template_directory_uri(); ?>/images/favicon.ico" type="image/x-icon">
 	<link rel="stylesheet" href="<?php echo get_stylesheet_uri(); ?>">
@@ -69,7 +69,7 @@
 
 				<!-- headline -->
 				<hgroup id="page-title" class="clearfix">
-					<h2>保護ワンコ 情報</h2><h3>Pet Information</h3>
+					<h2>保護犬 情報</h2><h3>Pet Information</h3>
 				</hgroup>
 
 				<!-- / headline -->

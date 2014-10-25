@@ -22,12 +22,21 @@ $view_mode = $_GET['view_mode'];
  * 
  */
 
+$wpd_instance->wpd_header();
+
 if ($view_mode == "pet_detail_report"){
+	
+	if ( is_user_logged_in() ){
+		//auth_redirect();
+	}
+	
 	require_once 'pet_detail_report.php';
+	echo $wpd_report;
+	get_footer(); 
+	die ();
 }
 
 
-$wpd_instance->wpd_header();
 
 /* ここらは プラグイン『wans_pet_detail』の 記事一覧に関する処理
  * ***********************************************************************************************************
