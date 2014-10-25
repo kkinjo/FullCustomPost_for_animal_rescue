@@ -106,21 +106,149 @@ jQuery(window).load( function () {
     }); 
 
 
-    /* *******************************************
-     * WPD配列分解用
+    /* ********************************************************
+     * status_history 関連の処理
+     * 配列を JSON にする。
      */
-    $(".status_history_array").change( function(){
-      var status_history_arry = $(".status_history_array").map(function () {
-        return this.value;
-      }).get().join(",");
-      
-      // カンマ区切り
-      var status_history_arry_edit =  status_history_arry.replace("/,+/",",");
-      var recent_status_arry =  status_history_arry_edit.split(",").slice(2, -1);
-      jQuery('[name=status_history]').val(status_history_arry_edit);
-      jQuery('[name=now_status]').val(recent_status_arry[0]);
-      jQuery('[name=recent_status_change]').val(recent_status_arry[1]);
+    // JSON文字列に変換して、status_history に入力
+    function make_json(){
+        var status_history_array = $('div.status_history_array').map(
+                function(){
+                    var value2 = $(this).children("input.status_history_array").map(
+                            function(){
+                                var input_value = this.value;
+                                var input_name= $(this).attr('status_history');
+                                return '"'+input_name+'":"'+input_value+'"';
+                            }).get().join(',');
+                    return '{'+value2+'}';
+                }
+            ).get().join(',');
+        var sh_json = '['+status_history_array+']';
+        $('input[name=status_history]').val(sh_json);
+        return sh_json;    
+    }
+    
+    // JSONから配列に変換して、ソートする
+    function sh_sort(target){
+        
+        //編集中の要素の値を取得
+        
+        var editing_values = Array(2);
+        $(target).parent().children("input.status_history_array").map(
+                function(){
+                    var input_name= $(this).attr('status_history');
+                    editing_values[input_name]=this.value;
+                });
+        var editing_obj = "{"+editing_values+"}";
+
+
+                console.log(editing_values["date"]);
+                console.log(editing_values["status"]);
+                
+        //編集中の要素が date と status が記入されていないと発動しない。
+        if( 
+                editing_values["date"] != ""
+                &&
+                editing_values["status"] != ""
+                )
+        {
+            //JSONを作成
+            var sh_json = make_json();
+        
+            //配列に変換
+            var sh_array = JSON.parse(sh_json);
+            sh_array.sort(function(a, b){
+                var x = a.date;
+                var y = b.date;
+                if (x === "") return 1;
+                if (y === "") return -1;
+                if (x > y) return 1;
+                if (x < y) return -1;
+                return 0;});
+        
+            $('div.status_history_array').map(function(index, dom){
+                $(this).children("input[status_history=date]").val(sh_array[index]["date"]).attr("value",sh_array[index]["date"]);
+                $(this).children("input[status_history=status]").val(sh_array[index]["status"]).attr("value",sh_array[index]["status"]);
+                
+                //ワンズ登録日 はグレーアウト
+                if( sh_array[index]["status"] == "ワンズ登録日" ){
+                    $(this).children("input").attr("readonly","readonly");
+                    $(this).children("input[status_history=date]").removeClass("wpd_tdp");
+                }
+                else{
+                    $(this).children("input").removeAttr("readonly","readonly");
+                    $(this).children("input[status_history=date]").addClass("wpd_tdp");
+                }
+
+                //編集中の要素は、sh_now_here を追加
+                if( 
+                        editing_values["date"] == sh_array[index]["date"]
+                        &&
+                        editing_values["status"] == sh_array[index]["status"]
+                        )
+                {
+                    $(this).addClass("sh_now_here");
+                }
+                else{
+                    $(this).removeClass("sh_now_here");
+                }
+            });
+        
+            //最新の JSON を反映(非表示)
+            sh_json = JSON.stringify(sh_array);
+            $('input[name=status_history]').val(sh_json);
+        }
+    }
+    
+    //初回実行
+    make_json();
+    //ワンズ登録日をグレーアウト
+    $("input.status_history_array[status_history=status][value='ワンズ登録日']").attr("readonly","readonly");
+    $("input.status_history_array[status_history=status][value='ワンズ登録日']")
+            .parent().children("input[status_history=date]").attr("readonly","readonly").removeClass("wpd_tdp");
+
+    //ソート関数をひもづける
+    $('input.status_history_array').live("change",function () {
+        sh_sort(this);
     });
+    // 色付け
+    $('input.status_history_array').live("focus ",function () {
+        $("div.status_history_array").removeClass("sh_now_here");
+        $(this).parent().addClass("sh_now_here");
+    });
+
+    //履歴入力項目を追加
+    $("a[name=fcpfar_add_status_history]").live("click dblclick", function(){
+        var shat_html = $("#status_history_array_template").html();
+        $(this).parent().after("<div class='status_history_array' >"+shat_html+"</div>");
+    });
+    
+    //履歴入力項目を削除
+    $("a[name=fcpfar_del_status_history]").live("click dblclick", function(){
+        $(this).parent().remove();
+        sh_sort();
+    });
+    
+    //現在のステータスを履歴に移動する。
+    $("a[name=fcpfar_push_to_history]").live("click dblclick", function(){
+        var now_status = $("option[fcpar_s_value=now_status]:selected").val();
+        var recent_status_change = $("input[name=recent_status_change]").val();
+        $("option[fcpar_s_value=now_status][value=]").attr('selected');
+        $("input[name=recent_status_change]").val('');
+        
+        var shat_html = $("#status_history_array_template").html();
+        $('#status_history').append("<div class='status_history_array' new>"+shat_html+"</div>");
+        var new_target = $('.status_history_array[new]').children('[status_history=date]').val(recent_status_change);
+        $('.status_history_array[new]').children('[status_history=status]').val(now_status );
+        $('.status_history_array[new]').removeAttr('new');
+        console.log(new_target);
+        sh_sort(new_target);
+    });
+    /* ********************************************************
+     * status_history 関連の処理 ここまで
+     * ********************************************************
+     */
+
 
     $(".related_url_array").change( function(){
       var related_url_array = $(".related_url_array").map(function () {
@@ -131,13 +259,13 @@ jQuery(window).load( function () {
     });
 
      $.datepicker.setDefaults($.datepicker.regional['ja']);
-     $('.wpd_tdp').datepicker({
+     $('.wpd_tdp').live('focusin',function(){$(this).datepicker({
         dateFormat: 'yy-mm-dd',
         changeYear: true,
         changeMonth: true,
         showOtherMonths: true,
         showButtonPanel: true
-    });
+    })});
 
     /* query_block *** start ******************************************** */
     $('[name=post_title]').val("WANS:"+ $('[name=meta_id]').val());
@@ -336,5 +464,3 @@ function wpd_form_validateion(){
             jQuery("input[type=submit]").removeAttr("disabled").removeAttr("title");
         }
     }
-    
-    

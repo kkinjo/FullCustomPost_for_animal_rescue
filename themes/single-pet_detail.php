@@ -19,15 +19,25 @@ $$colname = isset($value) ? $value : null;
 
     /* 配列カウント */
     if(!empty($status_history)){
-    $status_history = preg_replace('/,+\z/',"",$status_history);
-    $status_history_array = explode(',', $status_history);
-    $status_history_count = count($status_history_array)/2 ;
-    $status_history ="";
-    for ($i = 0; $i <= $status_history_count; ) {
-        $status_history .= $status_history_array[$i++].' : '.$status_history_array[$i++].' ～ '. $status_history_array[$i+1].'<BR>';
-        }
-    
-    }
+		$status_history_array =  json_decode($status_history,TRUE );
+		$status_history_array = is_array($status_history_array) ? $status_history_array : array();
+		$status_history_html = "";
+		foreach ( $status_history_array as $sha_key => $sha_value ) {
+			
+			if( 
+					!empty($sha_value["date"]) 
+					&&
+					!preg_match('/非公開/',$sha_value["status"])
+			){
+				$status_history_html .= $sha_value["date"]." - ";
+				$status_history_html .= $sha_value["status"];
+				$status_history_html .= "<BR>";
+				
+			}
+			
+		}
+		
+	}
 
     if(!empty($related_url)){
     $related_url = preg_replace('/,+\z/',"",$related_url);
@@ -45,7 +55,10 @@ $$colname = isset($value) ? $value : null;
     $wpd_age = str_replace("-", "",$birthyear);
     $wpd_age = (int) ((date('Ymd')-$wpd_age)/10000);
     
-$wpd_instance->wpd_header(); ?>
+$wpd_instance->wpd_header(); 
+
+
+?>
 
 <!-- single.php -->
 <div class="grid_9 push_3" id="main">
@@ -96,7 +109,7 @@ $wpd_instance->wpd_header(); ?>
             <div class="item"><div class="item_name">ワクチン</div><div class="item_data_s"><?php echo $vaccine; ?></div></div>
             <div class="item"><div class="item_name">健康状態</div><div class="item_data_s"><?php echo $health_condition; ?></div></div>
             <div class="item"><div class="item_name">大きさ</div><div class="item_data_s"><?php echo $Breeds_size; ?></div></div>
-            <div class="item"><div class="item_name">体重(おおよそ)</div><div class="item_data_s"><?php echo $weight; ?></div></div>
+            <div class="item"><div class="item_name">体重(おおよそ)</div><div class="item_data_s"><?php echo $weight; ?> kg</div></div>
         </div>
     </div>
 
@@ -106,9 +119,9 @@ $wpd_instance->wpd_header(); ?>
             <div class="item"><div class="item_name">ワンズ登録日</div><div class="item_data_s"><?php echo $wans_reg_date; ?></div></div>
             <div class="item"><div class="item_name">現在のステータス</div><div class="item_data_s"><?php echo $now_status; ?></div></div>
 				<?php
-					if($status_history !== " :  ～ <BR>"){
+					if(!empty($status_history)){
 				?>
-			<div class="item"><div class="item_name">ステータス変更履歴</div><div class="item_data_s"><?php echo $status_history; ?></div></div>
+			<div class="item"><div class="item_name">ステータス変更履歴</div><div class="item_data_s"><?php echo $status_history_html; ?></div></div>
 				<?php
 					}
 				?>
@@ -136,7 +149,7 @@ $wpd_instance->wpd_header(); ?>
             <?php 
                 if (!empty($photo_url)) {
 			?>
-            <div class="item"><div class="item_name">写真集ページ</div></div>
+            <div class="item"><div class="item_name">ギャラリー</div></div>
             <div id="containerimg">
 			<?php
                     $photo_url_dom = file_get_html($photo_url);
@@ -144,23 +157,32 @@ $wpd_instance->wpd_header(); ?>
                     foreach($photo_url_dom->find('img') as $element) 
                     {
                         if(preg_match('/googleusercontent/',$element->src)){
-                            //list($width,$height) = getimagesize($element->src);
-                            array_push($img_src_array,$element->src);
-                            //echo '<img class="box" src='.$element->src.' style="height: 150px;">' ;
+							$img_src_array[] = $element->src;
                         }
                     }
                     
-                    for($a = 0; $a < 8; $a++){
-                        echo '<img class="box" src='.$img_src_array[$a].' style="height: 150px;">' ;
-                    }    
+					//枚数カウント変数初期化。
+					$fcpfar_gdphoto_view_counter = 0;
+					foreach ( $img_src_array as $key => $value ) {
+						// 8枚で表示は終了
+						if( $fcpfar_gdphoto_view_counter == 8 ){
+							echo '<BR><a href='.$photo_url.'  target="_blank">他の写真をもっと見る。</a>';
+							break;
+						}
+						echo '<img class="box" src='.$value.' style="height: 150px;">' ;
+						//枚数カウントのためインクリメント
+						$fcpfar_gdphoto_view_counter++;
+					}
+                    //for($a = 0; $a < 8; $a++){
+                    //    echo '<img class="box" src='.$img_src_array[$a].' style="height: 150px;">' ;
+                    //}    
 			?>
 			</div>
 			<?php
                }
             ?>
             
-			<div class="item"><div class="item_data_s"><?php if(!empty($photo_url)){echo '<a href='.$photo_url.'  target="_blank">他の写真をもっと見る。</a>' ;} ?></div></div>
-            
+			
 			<?php 
 			if(!empty($related_url)){
 			?>
@@ -222,7 +244,10 @@ $wpd_instance->wpd_header(); ?>
         </div>
     </div>
     <?php endif; ?>
-
+	<div class="grid_7">
+		<a href="http://onesdog.net/family/list/%E6%8E%B2%E8%BC%89%E3%83%AF%E3%83%B3%E3%82%B3%E3%81%AB%E9%96%A2%E3%81%99%E3%82%8B%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%81%9B/?pet_name=<?php echo $pet_name; ?>&pet_detail_url=<?php echo $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]; ?>" target="_blank" class="button button-rounded button-flat-primary a-clear" style="">この子についてのお問い合わせフォーム</a>
+		
+	</div>
 
 </div>
 
@@ -239,17 +264,26 @@ $wpd_instance->wpd_header(); ?>
 					endif; /* ループ終了 */ 
 					
 					$wpd_instance->wpd_footer();
+					
+
 				?>
 			
     </article>
     
     
     <div class="box-bottom"></div>
-        
+<?php 
+echo "referer<textarea>";
+$wpd_referer = wp_get_referer();
+kkdump($wpd_referer);
+kkdump($_SERVER);
+echo "</textarea>";
+?>        
 </div>
 <!-- main -->
 <!-- /single.php -->
 <?php 
+				
 	$wpd_instance->wpd_sidebar();
 	
 	get_footer(); 

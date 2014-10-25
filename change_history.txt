@@ -1,0 +1,68 @@
+
+
+2014/08/03:[NEW]bugfix_googledrive_photo_view_opti
+=======
+
+
+2014/08/24:[WIP]brashup_query_condition
+--------------------------------------------------
+FIX: 検索BOX から ステータスだけを目立たせる
+
+GIT: git checkout -b brashup_query_condition
+GIT: git status
+GIT: git push --set-upstream origin brashup_query_condition
+
+[SOL] status_bar を追加する。
+[ACP] 検索条件の引き継ぎ。
+
+
+GIT: git checkout develop
+GIT: git merge brashup_query_condition
+GIT: git branch -d brashup_query_condition
+
+
+
+2014/08/24:[SOL]bugfix_status_history_not_view_fine
+--------------------------------------------------
+BUG: 表示画面:「ステータス履歴」が適切に動作しない。JSON に対応していない。
+
+GIT: git checkout -b bugfix_status_history_not_view_fine
+GIT: git status
+GIT: git push --set-upstream origin bugfix_status_history_not_view_fine
+
+[SOL] 表示画面:「ステータス履歴」を JSON に対応させる。
+
+
+GIT: git checkout develop
+GIT: git merge bugfix_status_history_not_view_fine
+GIT: git branch -d bugfix_status_history_not_view_fine
+
+
+
+2014/08/03:[SOL]bugfix_status_history_not_workfine
+--------------------------------------------------
+BUG: 登録画面:入力項目「ステータス履歴」が適切に動作しない。機能が足りない
+
+GIT: git checkout -b bugfix_status_history_not_workfine
+GIT: git status
+GIT: git push --set-upstream origin bugfix_status_history_not_workfine
+
+[SOL] INPUT を追加するボタンを設置する。
+[SOL] 現在のステータスを履歴にプッシュするボタンを設置する。
+[SOL] サーバー側でもステータス履歴 をソートさせる。
+[SOL] Jscript でステータス履歴 をソートさせる。
+[SOL] $status_history を hidden にして、Javascript側で 表示されている INPUT から change で自動生成する。
+[SOL] 直近の変更オブジェクトの色付けて、別の要素が選択されたら色を抜く
+[SOL] 『ワンズ登録日』はグレーアウトする。
+
+
+
+
+
+2014/08/03:[SOL]bugfix_googledrive_photo_view_opti
+--------------------------------------------------
+BUG: グーグルドライブの画像表示に問題あり。画像が一つしか無い場合、無効な画像まで表示してしまう。
+
+
+
+2014/08/03 : ファイル作成。

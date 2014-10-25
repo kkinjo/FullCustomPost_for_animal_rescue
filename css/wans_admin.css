@@ -100,3 +100,14 @@
     border-color: rgb(174, 174, 252);
     border-style: solid;
 }
+
+
+#status_history_array_template{
+    display: none;
+}
+
+div.sh_now_here:before{
+     content:url('../css/images/here.jpeg') ;
+}
+
+
