@@ -137,8 +137,8 @@ class wpd_class {
 		register_post_type( 'pet_detail'
 				,array(
 					'labels' => array(
-						'name' => __( '保護ワンコデータ' )
-						,'singular_name' => __( '保護ワンコデータ' )
+						'name' => __( '保護犬データ' )
+						,'singular_name' => __( '保護犬データ' )
 						)
 					,'public' => true
 					,'supports' => array( 'title', 'exmeta_sectionid', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields' ,'comments' )
@@ -154,8 +154,8 @@ class wpd_class {
 				,'pet_detail'
 				,array( 'hierarchical' => true
 					,'update_count_callback' => '_update_post_term_count'
-					,'label' => '保護ワンコデータのカテゴリー'
-					,'singular_label' => '保護ワンコデータのカテゴリー'
+					,'label' => '保護犬データのカテゴリー'
+					,'singular_label' => '保護犬データのカテゴリー'
 					,'public' => true
 					,'show_ui' => true
 					)

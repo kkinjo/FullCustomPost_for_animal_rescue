@@ -304,7 +304,7 @@ color:#fff;
 
 #query_conditon_block{
     opacity: 0.7;
-    padding: 0px;
+    padding: 0 0 10px 0;
     margin: 10px 0 0px 0;
     border-bottom: 4px double #dadada;
     border-top: 4px double #dadada;
@@ -361,6 +361,11 @@ color:#fff;
 }
 
 .wpd_query_condition_from_submit{
+    position: relative;
+    top: -20px;
+    left: -20px;
+}
+.wpd_report_link{
     position: relative;
     top: -20px;
     left: -20px;
@@ -442,4 +447,19 @@ a.a-clear,a.a-clear:hover{
     color: white;
     vertical-align: middle;
     text-align: center;
+}
+
+.wpd_np{
+    text-align: center;
+    vertical-align: middle;
+    padding: 0px;
+    margin: 5px;
+}
+
+.wpd_np_condition{
+    background-color: #F8F8F8;
+    margin: 5px;
+    padding: 5px;
+    font-size: 12px;
+
 }

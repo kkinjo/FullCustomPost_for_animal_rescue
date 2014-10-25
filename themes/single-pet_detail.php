@@ -67,7 +67,7 @@ $wpd_instance->wpd_header();
         <?php if (have_posts()) : /* ループ開始 */
                while (have_posts()) : the_post(); ?>
 
-            <h3><?php echo $pet_name; /* 記事のタイトル */ ?></h3>
+            <h3 name='pet_name'><?php echo $pet_name; /* 記事のタイトル */ ?></h3>
             <div class="metabox clearfix">
                 <time class="post-date" datetime="<?php echo get_the_date("Y-m-j") ?>"><?php echo get_the_date(); /* 日付 */  ?></time>
                 <div>
@@ -117,11 +117,29 @@ $wpd_instance->wpd_header();
         <div class="level1_name">ワンズステータス</div>
         <div class="level1_data">
             <div class="item"><div class="item_name">ワンズ登録日</div><div class="item_data_s"><?php echo $wans_reg_date; ?></div></div>
-            <div class="item"><div class="item_name">現在のステータス</div><div class="item_data_s"><?php echo $now_status; ?></div></div>
+            <div class="item"><div class="item_name">現在のステータス</div><div class="item_data_s"><?php echo $recent_status_change." - ".$now_status; ?></div></div>
 				<?php
+					if( $now_status == "他団体に移動" ){
+				?>
+			<div class="item">
+				<div class="item_name">移動先団体</div>
+				<div class="item_data_s">
+				<?php 
+					if( !empty( $Other_org_url ) ){
+						echo "<a href='$Other_org_url' target='_blank'>$Other_org</a>";
+					}else{
+						echo $Other_org;
+					}
+				?>
+				</div>
+			</div>
+				<?php
+						
+					}
+				
 					if(!empty($status_history)){
 				?>
-			<div class="item"><div class="item_name">ステータス変更履歴</div><div class="item_data_s"><?php echo $status_history_html; ?></div></div>
+			<div class="item"><div class="item_name">ステータス履歴</div><div class="item_data_s"><?php echo $status_history_html; ?></div></div>
 				<?php
 					}
 				?>
@@ -169,7 +187,8 @@ $wpd_instance->wpd_header();
 							echo '<BR><a href='.$photo_url.'  target="_blank">他の写真をもっと見る。</a>';
 							break;
 						}
-						echo '<img class="box" src='.$value.' style="height: 150px;">' ;
+						$o_img = str_replace("=s190","=s500" ,$value );
+						echo '<a href="'.$o_img.'" rel="lightbox" ><img class="box" src='.$value.' style="height: 150px;" ></a>' ;
 						//枚数カウントのためインクリメント
 						$fcpfar_gdphoto_view_counter++;
 					}
@@ -244,17 +263,25 @@ $wpd_instance->wpd_header();
         </div>
     </div>
     <?php endif; ?>
-	<div class="grid_7">
+	<div class="grid_7" style="margin-bottom: 25px;">
 		<a href="http://onesdog.net/family/list/%E6%8E%B2%E8%BC%89%E3%83%AF%E3%83%B3%E3%82%B3%E3%81%AB%E9%96%A2%E3%81%99%E3%82%8B%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%81%9B/?pet_name=<?php echo $pet_name; ?>&pet_detail_url=<?php echo $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]; ?>" target="_blank" class="button button-rounded button-flat-primary a-clear" style="">この子についてのお問い合わせフォーム</a>
 		
 	</div>
 
 </div>
-
-            
-            <nav class="post-navi">
-                <span id="prev"><?php previous_post_link('%link','« %title'); /* 前の記事へ */ ?></span>
-                <span id="next"><?php next_post_link('%link','%title »'); /* 次の記事へ */ ?></span>
+<?php
+	$np_data = $wpd_instance->wpd_get_np_data(
+			 $wpd_instance->wpd_query_condtions['where']
+			,$wpd_instance->wpd_query_condtions['order']
+			,$post->ID
+			);
+	
+ ?>     
+            <nav class="post-navi" style="border-top: 4px double #dadada;">その他のワンコ<BR>
+                <?php 
+					echo $np_data; 
+					/* 前後の記事 */ 
+				?>
             </nav>
                 <?php endwhile;
                 else : ?>
@@ -263,7 +290,9 @@ $wpd_instance->wpd_header();
                 <?php 
 					endif; /* ループ終了 */ 
 					
-					$wpd_instance->wpd_footer();
+					echo $wpd_instance->wpd_query_condtions['condistion_title']; 
+ 
+					 $wpd_instance->wpd_footer();
 					
 
 				?>
@@ -272,19 +301,11 @@ $wpd_instance->wpd_header();
     
     
     <div class="box-bottom"></div>
-<?php 
-echo "referer<textarea>";
-$wpd_referer = wp_get_referer();
-kkdump($wpd_referer);
-kkdump($_SERVER);
-echo "</textarea>";
-?>        
 </div>
 <!-- main -->
 <!-- /single.php -->
 <?php 
 				
 	$wpd_instance->wpd_sidebar();
-	
 	get_footer(); 
 ?>

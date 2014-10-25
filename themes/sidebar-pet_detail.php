@@ -14,7 +14,7 @@ global $wpd_instance;
 	<aside class="module" id="local-navi_2">
 		<hgroup>
 
-		<h2>保護ワンコ情報</h2>
+		<h2>保護犬情報</h2>
 		<h3>PET INFORMATION</h3>
 
 		
@@ -53,7 +53,7 @@ global $wpd_instance;
 							<ul class="child">
 
 							
-	    						<li><a class="wpd_a" href="http://onesdog.net/pet_detail">保護ワンコ一覧</a></li>
+	    						<li><a class="wpd_a" href="http://onesdog.net/pet_detail">保護犬一覧</a></li>
 
 							
 	    						<li><a class="wpd_a" href="http://onesdog.net/family/event/">譲渡会のお知らせ</a></li>

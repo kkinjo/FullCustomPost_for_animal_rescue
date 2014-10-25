@@ -268,7 +268,7 @@ jQuery(window).load( function () {
     })});
 
     /* query_block *** start ******************************************** */
-    $('[name=post_title]').val("WANS:"+ $('[name=meta_id]').val());
+    $('[name=post_title]').val("WANS:"+ $('[name=meta_id]').val()+':'+$('input[name=pet_name]').val());
    /* query_block *** end ********************************************** */
 
 /* *******************************************
